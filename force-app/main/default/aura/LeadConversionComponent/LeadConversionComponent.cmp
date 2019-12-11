@@ -1,0 +1,25 @@
+<aura:component access="global" controller="LeadConvertController" implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction">
+    <aura:attribute name="recordId" type="Id"/>
+    <aura:attribute name="screenNumber" type="Integer" default="1"/>
+    <aura:attribute name="contactColumns" type="String"/>
+    <aura:attribute name="selectedContact" type="Contact"/>
+    <aura:attribute name="selectedAccount" type="Account"/>
+    <aura:attribute name="selectedProperty" type="Property__c"/>
+    <aura:attribute name="createDeal" type="boolean"/>
+    <aura:attribute name="selectedId" type="String"/>
+    <aura:attribute name="lead" type="Object" />
+     <aura:attribute name="isNewContact" type="Boolean"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <aura:if isTrue="{!v.screenNumber == 1}">
+    	<c:LeadConvertContacts screen="{!v.screenNumber}" contact="{!v.selectedContact}" lead="{!v.lead}" isNewContact="{!v.isNewContact}"/>    
+    </aura:if>
+    <aura:if isTrue="{!v.screenNumber == 2}">
+		<c:LeadConvertAccounts screen="{!v.screenNumber}" contact="{!v.selectedContact}" lead="{!v.lead}" selectedAccount="{!v.selectedAccount}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.screenNumber == 3}">
+        <c:LeadConvertProperties screen="{!v.screenNumber}" lead="{!v.lead}" property="{!v.selectedProperty}" createDeal="{!v.createDeal}"/>    
+    </aura:if>
+    <c:LeadConvertNavigationButtons screen="{!v.screenNumber}" lead="{!v.lead}" contact="{!v.selectedContact}" account="{!v.selectedAccount}"
+                                    property="{!v.selectedProperty}" createDeal="{!v.createDeal}"/>
+</aura:component>

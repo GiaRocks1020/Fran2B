@@ -1,0 +1,167 @@
+<aura:component controller="ApplicationEntityController">
+    <aura:attribute name="newApplication" type="Application__c" default="{'sobjectType' : 'Application__c'}"/>
+    <aura:attribute name="entitySelections" type="String" default="{!v.newApplication.Applying_as_an_Individual_or_Entity__c}"/>    
+    <aura:attribute name="isError" type="Boolean" default="False"/>
+    <aura:attribute name="isFirstTime" type="Boolean" default="True"/>
+    <aura:attribute name="step" type="Integer"/>
+    <aura:attribute name="showSpinner" type="Boolean" default="true" />
+    <aura:attribute name="hideFields" type="Boolean" default="false" />
+    <aura:attribute name="idToPrivateFiles" type="Map"/>
+    <aura:attribute name="sectionToUpdateMap" type="Map"/>
+     
+
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+
+    <aura:handler event="c:ApplicationFileDeleted" action="{!c.handleFileDeletion}"/>
+    <aura:handler event="c:ApplicationUpload" action="{!c.handleFileUpload}"/>
+
+    <div class="slds-card-wrapper">
+    <div class="slds-page-header__detail slds-grid slds-text-heading--medium">
+		<h2>Entity Information</h2>
+    </div>
+    <hr class="slds-m-top_small"/>
+        
+        <aura:if isTrue="{!v.showSpinner}">
+            <lightning:spinner />
+        </aura:if>
+
+	<lightning:layout class="">
+        <lightning:layoutItem padding="around-large" size="8">
+            <form class="slds-form--stacked">
+                <lightning:recordEditForm aura:id="editForm" recordId="{!v.newApplication.Id}" objectApiName="Application__c" onload="{!c.onRecordLoad}" onsuccess="{!c.incrementStep}"  onerror="{!c.onError}" onsubmit="{!c.onSubmit}">
+
+                <lightning:messages />
+
+
+                 <lightning:inputField fieldName="Section__c" variant="label-hidden" aura:id="section" class="slds-hide"/>
+                
+                <div class="slds-page-header slds-text-title_caps slds-p-around_small">Entity/Individual Information</div>
+
+                
+                    <div class="slds-m-top_x-small" >
+
+                        <label class="slds-form-element__label" for="applyingType">
+                        <span class="slds-required">*</span>
+                        Applying as an Individual or Entity?
+
+
+                            <c:ApplicationHelpText textToDisplay="{!$Label.c.Application_Applying_Type_Help_Text}" wrapperCssClass="zindex5" />
+
+                        </label>
+                        <lightning:inputField fieldName="Applying_as_an_Individual_or_Entity__c" 
+                                            aura:id="applyingType" 
+                                            onchange="{!c.onEntitySelectionChange}"
+                                            variant="label-hidden"/>
+                    </div>
+
+
+                    <div class="slds-m-top_x-small" aura:id="entityWrapper">
+                        <label class="slds-form-element__label" for="entityType">
+                        <span class="slds-required">*</span>
+                        Entity Type
+
+ 
+
+                            <c:ApplicationHelpText textToDisplay="{!$Label.c.Application_Entity_Type_Help_Text}" wrapperCssClass="zindex4" />
+
+                        </label>
+                        <lightning:inputField fieldName="Entity_Type__c"
+                                            aura:id="entityType" 
+                                            onchange="{!c.onTypeChange}" 
+                                            variant="label-hidden"/>
+                    </div>
+                
+                <div aura:id="entityInfoWrapper">
+                    <label class="slds-form-element__label" for="entityName"><span class="slds-required">*</span>Entity Name</label>
+                    <lightning:inputField fieldName="Entity_Name__c" aura:id="entityName" variant="label-hidden"/>
+
+                <lightning:layout multipleRows="true" horizontalAlign="spread">
+                    <lightning:layoutItem size="6" class="slds-m-top_x-small">
+                        <lightning:inputField fieldName="Country_Formed__c" aura:id="countryFormed"/>
+
+                    </lightning:layoutItem>
+                
+                    <lightning:layoutItem size="6" class="slds-m-top_x-small slds-p-left_x-small">
+                        <lightning:inputField fieldName="State_Formed__c" aura:id="stateFormed"/>
+                    </lightning:layoutItem>
+                
+                    <lightning:layoutItem size="12">
+                    <div class="slds-page-header slds-text-title_caps slds-m-top_x-large slds-p-around_small">Entity Address</div>
+                    </lightning:layoutItem>
+                
+                    <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                        <label class="slds-form-element__label" for="address2"><span class="slds-required">*</span>Address Line 1</label>
+                        <lightning:inputField fieldName="Entity_Address_Line_1__c" aura:id="address1" variant="label-hidden" />
+                    </lightning:layoutItem>
+                
+                    <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                        <label class="slds-form-element__label" for="address2">Address Line 2</label>
+                        <lightning:inputField fieldName="Entity_Address_Line_2__c" aura:id="address2" variant="label-hidden"/>
+                    </lightning:layoutItem>
+                
+                    <lightning:layoutItem size="6" class="slds-m-top_x-small">
+                        <label class="slds-form-element__label" for="city"><span class="slds-required">*</span>City</label>
+                        <lightning:inputField fieldName="Entity_City__c" aura:id="city" variant="label-hidden"/>
+                    </lightning:layoutItem>
+                
+                    <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                        <label class="slds-form-element__label" for="city"><span class="slds-required">*</span>State/Province</label>
+                        <lightning:inputField fieldName="Entity_State_Province__c" aura:id="state" variant="label-hidden"/>
+                    </lightning:layoutItem>
+                
+                    <lightning:layoutItem size="6" flexibility="grow" class="slds-m-top_x-small">
+                        <label class="slds-form-element__label" for="country"><span class="slds-required">*</span>Country</label>
+                        <lightning:inputField fieldName="Entity_Country__c" aura:id="country" variant="label-hidden"/>
+                    </lightning:layoutItem>
+                
+                    <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                        <label class="slds-form-element__label" for="zip"><span class="slds-required">*</span>Zip/Postal Code</label>
+                        <lightning:inputField fieldName="Entity_Zip_Postal_Code__c" aura:id="zip" variant="label-hidden"/>
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem size="12" flexibility="grow" class="slds-m-top_x-small">
+                        <label class="slds-form-element__label" for="ein">EIN</label>
+                        <lightning:inputField fieldName="EIN__c" aura:id="ein" variant="label-hidden"/>
+                    </lightning:layoutItem>
+                    
+
+                     <lightning:layoutItem size="12" flexibility="grow" class=" slds-m-top_x-small">
+                        <c:ApplicationFileUpload parentId="{!v.idToPrivateFiles.Entity_Document__c.Id}" section="Entity_Document__c" label="Entity Documents"/>
+                     </lightning:layoutItem>
+
+
+                 
+                     <lightning:layoutItem  size="6" flexibility="grow" class="slds-m-top_x-small noHover">
+                        <label class="slds-form-element__label" for="Entity_Document__c">Entity Document(s) Uploaded?
+
+                        </label>
+                        <lightning:inputField class="noClick" fieldName="Entity_Document__c" aura:id="Entity_Document__c" variant="label-hidden" />
+                    </lightning:layoutItem>
+                    
+
+
+
+                </lightning:layout>
+                    
+                    <div class="slds-m-top_x-small"/>
+                    
+                </div>
+
+              
+                <div class="slds-align_absolute-center slds-m-top_large">
+                    <lightning:button aura:id="prevButton" disabled="{!v.step == 1}" variant="brand" label="Previous" onclick="{!c.decrementStep}"/>
+                    <aura:if isTrue="{!v.step != 7}">
+                    <lightning:button variant="brand" label="Next" type="submit"/>
+                    </aura:if>
+                </div>
+
+            </lightning:recordEditForm>
+            </form>
+        </lightning:layoutItem>
+        <lightning:layoutItem  padding="around-large" size="4">
+            <c:ApplicationFileDisplay appId="{!v.newApplication.Id}"
+                idToUploadTo ="{!v.idToPrivateFiles.Additional_Document__c.Id}"/>
+        </lightning:layoutItem>
+    </lightning:layout>
+    </div>	
+</aura:component>

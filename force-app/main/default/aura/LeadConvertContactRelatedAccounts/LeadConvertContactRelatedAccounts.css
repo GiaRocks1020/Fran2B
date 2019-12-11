@@ -1,0 +1,13 @@
+.THIS.half-heigth{
+    min-height: 46%;
+}
+
+.THIS .border-half{
+    border-bottom: 2px solid rgb(221, 219, 218);
+    padding-bottom: 12px;
+}
+
+.THIS .reminder{
+    font-style: italic;
+    color: red;
+}

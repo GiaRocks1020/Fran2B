@@ -1,0 +1,98 @@
+.THIS.popOver{
+    margin-top: -15px;
+    margin-left: 10px;
+    color: white;
+    background-color: rgb(0, 70, 115);
+    position: absolute;
+}
+
+.THIS.popOverOwnership{
+    margin-top: -15px;
+    margin-left: 10px;
+    color: white;
+    background-color: rgb(0, 70, 115);
+    position: relative;
+}
+
+.THIS.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+    z-index: 3;
+    padding-left: 2px;
+
+}
+
+.THIS.tooltip .tooltip-content {
+    visibility: hidden;
+    background-color: rgb(0, 70, 115);
+    min-width: 270px;
+    color: white;
+    text-align: left;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 3;
+    top: -1.2em;
+    /*
+    top: -4.2em;
+    min-height: 10em;
+    */
+
+    cursor: help;
+    left: 120%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+   
+}
+.THIS.tooltip-content{
+    z-index: 4!important;
+}
+
+.THIS .tooltip-text {
+    vertical-align: middle;
+    padding: 10px;
+ }
+
+.THIS.tooltip .tooltip-content::after {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    background-color: rgb(0, 70, 115);
+    color: white;
+   	
+    transform: translateY(650%);
+}
+
+.THIS.tooltip:hover .tooltip-content {
+    visibility: visible;
+
+   
+}
+
+
+.THIS .bigTop{
+    top: -30em !important;
+    width:350px;
+    right: 110% !important;
+    left: -1950% !important;
+
+}
+
+
+
+
+.THIS.zindex4{
+    z-index: 4;
+}
+
+.THIS.zindex5{
+    z-index: 5;
+}
+.THIS.zindex6{
+    z-index: 6;
+}

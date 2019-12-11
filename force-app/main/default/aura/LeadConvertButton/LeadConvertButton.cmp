@@ -1,0 +1,8 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId" access="global" controller="LeadConvertController">
+    <aura:attribute name="lead" type="Object" />
+    <aura:attribute name="showButton" type="Boolean" default="true"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <aura:if isTrue="{!v.showButton}">
+   	<lightning:button variant="brand" label="Convert Lead" onclick="{!c.navigateLeadConversionComponent}"/>
+    </aura:if>
+</aura:component>

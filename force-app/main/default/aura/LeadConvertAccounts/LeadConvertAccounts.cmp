@@ -1,0 +1,16 @@
+<aura:component controller="LeadConvertAccountListController">
+    <aura:attribute name="contactAccounts" type="List"/>
+    <aura:attribute name="accountColumns" type="List"/>
+    <aura:attribute name="contact" type="Contact"/>
+    <aura:attribute name="screen" type="Integer"/>
+    <aura:attribute name="selectedId" type="String"/>
+    <aura:attribute name="lead" type="object"/>
+    <aura:attribute name="selectedAccount" type="Account"/>
+    
+    <div class="slds-card-wrapper slds-scrollable--x">
+    	<c:LeadConvertContactRelatedAccounts contact="{!v.contact}" selectedId="{!v.selectedId}" 
+                                             title="Lead Convert Step 2 of 3" accounts="{!v.contactAccounts}" selectedAccount="{!v.selectedAccount}"/>
+        <br/>
+        <c:LeadConvertLeadRelatedAccounts selectedId="{!v.selectedId}" lead="{!v.lead}" contactAccounts="{!v.contactAccounts}" selectedAccount="{!v.selectedAccount}"/>
+    </div>
+</aura:component>

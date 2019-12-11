@@ -1,0 +1,36 @@
+<aura:component >
+    <aura:attribute name="account" type="Account" default="{'sobjectType': 'Account'}"/>
+    <aura:attribute name="apiNames" type="List"/>
+    <aura:attribute name="selectedId" type="String"/>
+    <aura:attribute name="selectedAccount" type="Account"/>
+    <aura:attribute name="percent" type="Integer"/>
+    <aura:attribute name="type" type="String"/>
+    
+    <aura:attribute name="displayData" type="List"/>
+    <aura:attribute name="isSelected" type="Boolean"/>
+    <aura:attribute name="showRadio" type="Boolean"/>  
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:handler name="change" value="{!v.selectedId}" action="{!c.checkSelection}"/>    
+    <tr>
+        <aura:if isTrue="{!v.showRadio}">
+        <th class="radio-s-width">
+	 		<label class="slds-radio">   
+                <ui:inputRadio aura:id="{!v.account.Id}" change="{!c.isClicked}" value="{!v.isSelected}"/>
+                <span class="slds-radio--faux"></span>
+                <span class="slds-assistive-text">Select Row</span>
+   			</label>
+        </th>
+        </aura:if>
+        <aura:iteration items="{!v.displayData}" var="dd">
+            <th>
+                {!dd}
+            </th>
+        </aura:iteration>
+    	<aura:if isTrue="{!!empty(v.percent)}">
+        <th>
+            {!v.percent}%
+        </th>
+        </aura:if>
+    </tr>
+</aura:component>

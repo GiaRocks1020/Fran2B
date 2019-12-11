@@ -1,0 +1,139 @@
+<aura:component controller="ApplicationLegalRepController">
+    <aura:attribute name="newApplication" type="Application__c" default="{'sobjectType' : 'Application__c'}"/>
+    <aura:attribute name="legalRep" type="Applicant__c" default="{'sobjectType' : 'Applicant__c'}"/>
+	<aura:attribute name="showSpinner" type="Boolean" default="true" />
+    <aura:attribute name="step" type="Integer"/>
+    <aura:attribute name="idToPrivateFiles" type="Map"/>
+    
+    <aura:handler event="c:ApplicationFileDeleted" action="{!c.handleFileDeletion}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+ <aura:if isTrue="{!v.legalRep.Id != null}">
+    <div class="slds-card-wrapper">
+    <div class="slds-page-header__detail slds-grid slds-text-heading--medium">
+		<h2>Designated Representative</h2>
+    </div>
+    <hr class="slds-m-top_small"/>
+    <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner />
+    </aura:if>
+
+
+
+        
+	<lightning:layout class="">
+        <lightning:layoutItem padding="around-large" size="8">
+            <form class="slds-form--stacked">
+            <lightning:recordEditForm aura:id="editForm" recordId="{!v.legalRep.Id}" objectApiName="Applicant__c" onload="{!c.onLoad}" onsuccess="{!c.incrementStep}"  onerror="{!c.onError}" >
+            <lightning:messages/>
+            <div class="slds-text-title_caps slds-page-header slds-p-around_small">Designated Representative Name</div>
+
+            <lightning:inputField fieldName="Section__c" variant="label-hidden" aura:id="section" class="slds-hide"/>
+
+          
+            
+
+            <lightning:layout multipleRows="true" horizontalAlign="spread" class="slds-m-top_x-small">
+                
+                 <lightning:layoutItem aura:id="salutationItem" size="4">          
+					<label class="slds-form-element__label" for="salutation"><span class="slds-required">*</span>Salutation</label>
+                    <lightning:inputField fieldName="Salutation__c" variant="label-hidden" aura:id="salutation" value="{!v.legalRep.Salutation__c}"/>              
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="8" class="slds-p-left_x-small">
+                    <label class="slds-form-element__label" for="firstName"><span class="slds-required">*</span>Legal First Name</label>
+                    <lightning:inputField fieldName="First_Name__c" variant="label-hidden" aura:id="firstName"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" class="slds-m-top_x-small">
+                   	<label class="slds-form-element__label" for="middleName">Legal Middle Name</label>
+                    <lightning:inputField fieldName="Middle_Name__c" variant="label-hidden" aura:id="middleName"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small  slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="lastName"><span class="slds-required">*</span>Legal Last Name</label>
+                    <lightning:inputField fieldName="Last_Name__c" variant="label-hidden" aura:id="lastName"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="12" flexibility="grow" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="nickname">Nickname</label>
+                    <lightning:inputField fieldName="Nickname__c" variant="label-hidden" aura:id="nickname"/>
+                </lightning:layoutItem>
+            </lightning:layout>
+
+			<div class="slds-page-header slds-text-title_caps slds-m-top_x-large slds-p-around_small">Designated Representative Address</div>
+			<lightning:layout multipleRows="true" horizontalAlign="spread" class="slds-m-top_x-small">
+                <lightning:layoutItem size="12">
+                    <label class="slds-form-element__label" for="street1"><span class="slds-required">*</span>Address Line 1</label>
+                    <lightning:inputField fieldName="Business_Address_Line_1__c" variant="label-hidden" aura:id="street1"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="street2">Address Line 2</label>
+                    <lightning:inputField fieldName="Business_Address_Line_2__c" variant="label-hidden" aura:id="street2"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="city"><span class="slds-required">*</span>City</label>
+                    <lightning:inputField fieldName="Business_City__c" variant="label-hidden" aura:id="city"/>                     
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem aura:id="stateItem" size="6" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="state"><span class="slds-required">*</span>State/Province</label>
+                    <lightning:inputField fieldName="Business_State_Province__c" variant="label-hidden" aura:id="state" value="{!v.legalRep.Business_State_Province__c}"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="country"><span class="slds-required">*</span>Country</label>
+                    <lightning:inputField fieldName="Business_Country__c" variant="label-hidden" aura:id="country"/> 
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-m-top_x-small slds-p-left_x-small">
+                    <label class="slds-form-element__label" for="zip"><span class="slds-required">*</span>Zip/Postal Code</label>
+                    <lightning:inputField fieldName="Business_Zip_Postal_Code__c" variant="label-hidden" aura:id="zip"/>
+                </lightning:layoutItem>
+                
+        	</lightning:layout>
+            <div class="slds-page-header slds-text-title_caps slds-m-top_x-large slds-p-around_small">Other Information</div>    
+                <div class="slds-m-top_x-small">
+                <label class="slds-form-element__label" for="email"><span class="slds-required">*</span>Designated Representative Email</label>
+                <lightning:inputField fieldName="Email__c" variant="label-hidden" aura:id="email"/>
+                </div>
+                
+                <div class="slds-m-top_x-small">
+                <label class="slds-form-element__label" for="mobilPhone">Designated Representative Mobile Phone Number</label>
+                <lightning:inputField fieldName="Mobile_Phone__c" variant="label-hidden" aura:id="mobilPhone"/>
+                </div>
+                
+                <div class="slds-m-top_x-small">
+                <label class="slds-form-element__label" for="businessPhone">Designated Representative Business Phone Number</label>
+                <lightning:inputField fieldName="Business_Phone__c" variant="label-hidden" aura:id="businessPhone"/>
+                </div>
+                
+                <div class="slds-m-top_x-small">
+                <label class="slds-form-element__label" for="isOwner">Is the Designated Representative also one of the owners?</label>
+                <lightning:inputField fieldName="Is_the_Desig_Rep_also_one_of_the_Owners__c" variant="label-hidden" aura:id="isOwner"/>
+                </div>
+                
+                <div class="slds-m-top_x-small">
+                <label class="slds-form-element__label" for="howDidYouHere">How did you hear about us?</label>
+                <lightning:inputField fieldName="How_did_you_hear_about_us__c" variant="label-hidden" aura:id="howDidYouHere"/>
+                </div>
+
+                <div class="slds-align_absolute-center slds-m-top_large">
+                    <lightning:button aura:id="prevButton" disabled="{!v.step == 1}" variant="brand" label="Previous" onclick="{!c.decrementStep}"/>
+                    <aura:if isTrue="{!v.step != 7}">
+                    <lightning:button variant="brand" label="Next" type="submit"/>      
+            </aura:if>
+                </div>
+            </lightning:recordEditForm>
+            </form>
+        </lightning:layoutItem>
+        <lightning:layoutItem  padding="around-large" size="4" class="">
+             <c:ApplicationFileDisplay appId="{!v.newApplication.Id}"
+                idToUploadTo ="{!v.idToPrivateFiles.Additional_Document__c.Id}"/>
+        </lightning:layoutItem>
+    </lightning:layout>
+    </div>	
+    </aura:if>
+
+</aura:component>

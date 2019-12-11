@@ -1,0 +1,230 @@
+<aura:component  implements="force:lightningQuickAction,force:hasRecordId" access="global" controller="PIPSelectionCompCtrl"> 
+    <lightning:navigation aura:id="navService"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>  
+    <aura:attribute name="data" type="PIP_Library_Item__c[]" />  
+    <aura:attribute name="filteredData" type="PIP_Library_Item__c[]" />
+    <aura:attribute name="dataObjects" type="Object[]" />  
+    <aura:attribute name="filteredDataObjects" type="Object[]" />
+    <aura:attribute name="SelectedData" type="String[]" />
+    <aura:attribute name="LineItemCount" type="Integer" />
+    <aura:attribute name="categoryList" type="String[]" />
+    <aura:attribute name="subCategoryList" type="String[]" />
+    <aura:attribute name="groupList" type="String[]" />
+    <aura:attribute name="categoryMap" type="Object[]"/>
+    <aura:attribute name="subCategoryMap" type="Object[]"/>
+    <aura:attribute name="SelectedCategory" type="String" />
+    <aura:attribute name="SelectedSubCategory" type="String" />
+    <aura:attribute name="showFilters" type="boolean" />
+    <aura:attribute name="hideFilters" type="boolean" />
+    <aura:attribute name="showspinner" type="boolean" />
+    <aura:attribute name="showSubCategory" type="boolean" />
+
+
+    <aura:attribute name="LibraryFilter" type="String" />  
+    <aura:html tag="style">
+        .slds-modal__container {
+        min-width: 70vw;
+        }
+        .modal-body{
+        height : 400px !important;
+        max-height: 400px !important;
+        }
+    </aura:html>
+    <div class="slds-grid slds-gutters">
+            <aura:if isTrue="{!v.showspinner}">   
+                <lightning:spinner alternativeText="Loading" size="medium"/>
+            </aura:if>
+        <div class="slds-box">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large slds-list-builder" aria-labelledby="id-of-modalheader-h2" aria-modal="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="id-of-modalheader-h2" class="slds-text-heading_medium">PIP Items</h2>
+                    <p class="slds-m-top_x-small">Select PIP Items</p>
+                </header>
+            <div class="slds-modal__content slds-grid slds-grow" id="modal-content-id-1">
+                <div class="slds-grid slds-grid_vertical">
+                    <div class="slds-p-vertical_x-small slds-p-horizontal_large slds-shrink-none slds-theme_shade">
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label slds-assistive-text" for="combobox-unique-id-2">Search</label>
+                                <div class="slds-form-element__control">
+                                    <div role="none" onkeyup="{!c.filterData}">
+                                        <lightning:input aura:id="LibraryFilterId" value="{!v.LibraryFilter}" type="text" id="combobox-unique-id-2" aria-autocomplete="list" role="textbox" placeholder="Search Library Items. (Please enter at least 2 Chars to Search)"  />                                            
+                                    </div>
+                                </div>
+                        </div>
+                        <div>
+                            <div class="slds-grid">
+                                <div class="slds-col">
+                                    <div class="slds-section">
+                                        <div class="slds-form-element slds-form-element_compound slds-form-element__control slds-form-element__row">
+                                        <div class="slds-form-element">
+                                        </div>
+                                        <div class="slds-form-element" onclick="{!c.toggleFilters}">
+                                                <aura:if isTrue="{!!v.showFilters}">
+                                                    <a ><div class="slds-text-title slds-m-top_x-small slds-size_1-of-2 slds-align_absolute-right" id="LineCount" aria-live="polite">Show Filters</div> </a>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.showFilters}">
+                                                <a> <div class="slds-text-title slds-m-top_x-small slds-size_1-of-2 slds-align_absolute-right" id="LineCount" aria-live="polite">Hide/Reset Filters</div></a>
+                                                </aura:if>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-col" style="text-align:right">
+                                        <div class="slds-text-title slds-m-top_x-small slds-align_absolute-right" id="LineCount" aria-live="polite">{!v.LineItemCount} Item(s) Selected</div>
+                                </div>
+                            </div>
+                        </div>
+                        <aura:if isTrue="{!v.showFilters}">
+                        <div class="slds-section " aura:id="Filters">
+                                <fieldset class="slds-form-element slds-form-element_compound">
+                                        <legend class="slds-form-element__legend slds-form-element__label">Filters</legend>
+                                        <div class="slds-form-element__control">
+                                          <div class="slds-form-element__row">
+                                            
+                                            <div class="slds-size_1-of-3">
+                                              <div class="slds-form-element" > 
+                                                    <lightning:select aura:id="Category" name="Program" label="Program" value="{!v.SelectedCategory}" onchange="{!c.categoryChange}" >
+                                                            <aura:iteration items="{!v.categoryList}" var="option">
+                                                                    <option text="{!option}" value="{!option}" selected="{!option}"/>
+                                                                </aura:iteration>
+                                                     </lightning:select>
+                                              </div>
+                                            </div>
+                                            <div class="slds-size_1-of-3">
+                                                    <div class="slds-form-element">
+                                                        <aura:if isTrue="{!v.showSubCategory}">
+                                                        <lightning:select aura:id="subCategory" name="Category" label="Category" value="{!v.SelectedSubCategory}" onchange="{!c.filterData }" >
+                                                            <aura:iteration items="{!v.subCategoryList}" var="option">
+                                                            <option text="{!option}" value="{!option}" selected="{!option}"/>
+                                                        </aura:iteration></lightning:select>
+                                                    </aura:if>
+                                                    </div>
+                                                  </div>
+                                          </div>
+                                        </div>
+                                      </fieldset>
+                              </div>   
+                              </aura:if> 
+
+                    </div>
+                        <div class="slds-scrollable slds-grow">
+                            <div class="slds-scrollable_none">
+                                <table aria-multiselectable="true" class="slds-table slds-no-row-hover slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols" role="grid">
+
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th class="" scope="col" style="width:3.75rem"></th>
+                                            <th aria-label="Item Short Name" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col" width="40%">
+                                                <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1" id="Name" >
+                                                    <div id="SortName" >
+                                                    <span class="slds-assistive-text">Sort by: </span>
+                                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                        <span class="slds-truncate" title="Short Name">Short Name</span>
+                                                            <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                                            <lightning:icon iconName="action:arrowdown" alternativeText="Sort" />        
+                                                        </span>
+                                                    </div></div>
+                                                </a>
+                                                <div class="slds-resizable">
+                                                    <input type="range" aria-label="Name column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-5" max="1000" min="20" tabindex="-1" />
+                                                    <span class="slds-resizable__handle">
+                                                    <span class="slds-resizable__divider"></span>
+                                                    </span>
+                                                </div>
+                                            </th>
+                                            <th aria-label="Location" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col" width="20%">
+                                                <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                                                    <span class="slds-assistive-text">Sort by: </span>
+                                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                        <span  title="Category">Category</span>
+                                                        <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                                            <lightning:icon iconName="action:arrowdown" alternativeText="Sort" />
+                                                        </span>
+                                                    </div>
+                                                </a>
+                                                <div class="slds-resizable">
+                                                    <input type="range" aria-label="Product Code column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-6" max="1000" min="20" tabindex="-1" />
+                                                    <span class="slds-resizable__handle">
+                                                        <span class="slds-resizable__divider"></span>
+                                                    </span>
+                                                </div>
+                                            </th>
+                                            
+                                        
+                                            <th aria-label="Category" aria-sort="none" class="slds-is-resizable slds-is-sortable" scope="col" width="40%">
+                                                    <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                                                        <span class="slds-assistive-text">Sort by: </span>
+                                                            <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                <span  title="Description">Description</span>
+                                                                <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                                                    <lightning:icon iconName="action:arrowdown" alternativeText="Approved" />
+                                                                </span>
+                                                        </div>
+                                                    </a>
+                                                    <div class="slds-resizable">
+                                                        <input type="range" aria-label="Product Family column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-8" max="1000" min="20" tabindex="-1" />
+                                                        <span class="slds-resizable__handle">
+                                                            <span class="slds-resizable__divider"></span>
+                                                        </span>
+                                                    </div>
+                                                </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <aura:iteration items="{!v.filteredDataObjects}" var="libraryItem">
+                                            <tr aria-selected="false" class="slds-hint-parent">
+                                                <td class="slds-align_absolute-center" role="gridcell" tabindex="0">
+                                                    <aura:if isTrue="{!libraryItem.preSelected}">
+                                                        <div class="slds-p-right_xxx-small">
+                                                        <lightning:icon title="This library item has been attached to Opening Project/PIP already." iconName="utility:warning" alternativeText="Warning!" variant="warning" size="xx-small">
+                                                        </lightning:icon>
+                                                        </div>
+                                                        <aura:set attribute="else">
+                                                            <div class="slds-p-right_small">
+                                                                <span/>
+                                                            </div>
+                                                            <div class="slds-p-right_xxx-small">
+                                                                    <span/>
+                                                                </div>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                    <div  class="slds-checkbox_add-button"  >
+                                                        <input onclick="{!c.pipitemSelected}" type="checkbox" class="slds-assistive-text" id="{!libraryItem.pipLibraryItem.Id}" tabindex="-1"  checked="{!libraryItem.isSelected}" />
+                                                        <label  for="{!libraryItem.pipLibraryItem.Id}" class="slds-checkbox_faux">
+                                                            <span class="slds-assistive-text">Select item {!libraryItem.Id}</span>
+                                                        </label>
+                                                    </div>
+                                                </td>
+                                                <th scope="row">
+                                                    <div class="slds-truncate" title="{!libraryItem.pipLibraryItem.PI_Short_Name__c}">{!libraryItem.pipLibraryItem.PI_Short_Name__c}</div>
+                                                </th>
+                                                <td role="gridcell">
+                                                        <div class="slds-truncate" title="{!libraryItem.pipLibraryItem.Category__c}">{!libraryItem.pipLibraryItem.Category__c}</div>
+                                                </td>                                                
+                                                <td role="gridcell">
+                                                        <div class="slds-truncate" title="{!libraryItem.pipLibraryItem.PI_Description__c}">{!libraryItem.pipLibraryItem.PI_Description__c}</div>
+                                                </td>
+                                            </tr>
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                               
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick="{!c.closeModal}">Cancel</button>
+                    <lightning:button variant="brand" label="Create Line Items" title="Create Line Items" onclick="{!c.createPIPLineItems}"/>
+                </footer>
+        </div>
+        
+
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+    
+</div>
+</aura:component>

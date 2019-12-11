@@ -1,0 +1,307 @@
+<aura:component controller="ApplicationOwnershipController">
+
+
+
+    <aura:attribute name="app" type="Application__c" default="{'sobjectType' : 'Application__c'}"/>
+    <aura:attribute name="owner" type="Applicant__c" default="{'sobjectType' : 'Applicant__c'}"/>
+    <aura:attribute name="isVisible" type="Boolean"/>
+    <aura:attribute name="idToPrivateFile" type="Map"/>
+    
+    <aura:attribute name="showSpinner" type="Boolean" default="true" />
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <aura:handler event="c:ApplicationSave" action="{!c.handleSaveEvent}"/>
+    <aura:handler event="c:ApplicationFileDeleted" action="{!c.handleFileDeletion}"/>
+    <aura:handler event="c:ApplicationUpload" action="{!c.handleFileUpload}"/>
+    <aura:if isTrue="{!v.owner.Id != null}">
+       
+    <div class="slds-card-wrapper">
+    <div class="slds-page-header__detail slds-grid slds-text-heading_medium">
+		<h2>Ownership</h2>
+    </div>
+    <hr class="slds-m-top_small"/>
+        <aura:if isTrue="{!v.showSpinner}">
+            <lightning:spinner />
+        </aura:if>
+    
+	<lightning:layout class="slds-align_absolute-center">
+        <lightning:layoutItem padding="around-small" size="11">
+            <form class="slds-form_stacked">
+            
+			<lightning:recordEditForm aura:id="editForm" recordId="{!v.owner.Id}" 
+                objectApiName="Applicant__c" onload="{!c.onRecordLoad}" onsuccess="{!c.onSubmitSuccess}" onerror="{!c.onError}">
+            
+            <lightning:messages/>    
+            <lightning:inputField fieldName="Section__c" variant="label-hidden" aura:id="section" class="slds-hide"/>    
+                
+            <div class="slds-page-header slds-text-title_caps slds-p-around_small">Owner Name</div>
+            <lightning:layout multipleRows="true" horizontalAlign="spread">
+                
+                <lightning:layoutItem size="6" class="slds-p-right_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="salutation"><span class="slds-required">*</span>Salutation</label>
+                    <lightning:inputField fieldName="Salutation__c" variant="label-hidden" aura:id="salutation"/>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="percentOwned"><span class="slds-required">*</span>Ownership %</label>
+                    <lightning:inputField fieldName="Ownership__c" variant="label-hidden" aura:id="percentOwned"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" class="slds-p-right_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="firstName"><span class="slds-required">*</span>Legal First Name</label>
+                    <lightning:inputField fieldName="First_Name__c" variant="label-hidden" aura:id="firstName"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="usCitizen"><span class="slds-required">*</span>US Citizen?</label>
+                    <lightning:inputField fieldName="U_S_Citizen__c" variant="label-hidden" aura:id="usCitizen"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" class="slds-p-right_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="middleName">Legal Middle Name</label>
+                    <lightning:inputField fieldName="Middle_Name__c" variant="label-hidden" aura:id="middleName"/>
+                </lightning:layoutItem>
+
+
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="socialSecurity">Owner SSN
+                        <c:ApplicationHelpText textToDisplay="SSN must have the following format: XXX-XX-XXXX"/>
+                    </label>
+
+                    <lightning:inputField fieldName="SSN__c" variant="label-hidden" aura:id="socialSecurity"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-right_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="lastName"><span class="slds-required">*</span>Legal Last Name</label>
+                    <lightning:inputField fieldName="Last_Name__c" variant="label-hidden" aura:id="lastName"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_small  slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="dob"><span class="slds-required">*</span>Date of Birth</label>
+                    <lightning:inputField fieldName="Date_of_Birth__c" variant="label-hidden" aura:id="dob"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-right_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="nickname">Nickname</label>
+                    <lightning:inputField fieldName="Nickname__c" variant="label-hidden" aura:id="nickname"/>
+                </lightning:layoutItem>
+            
+            
+                
+                </lightning:layout>
+                
+				<!-- Business Section -->
+                <div class="slds-page-header slds-text-title_caps slds-m-top_x-large slds-p-around_small">Owner Business Address</div>
+                <lightning:layout multipleRows="true" horizontalAlign="spread">
+                    
+                <lightning:layoutItem size="6" class="slds-p-right_small  slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="bstreet1"><span class="slds-required">*</span>Address Line 1</label>
+                    <lightning:inputField fieldName="Business_Address_Line_1__c" variant="label-hidden" aura:id="bstreet1"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-p-left_small slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="street2" label="Street 2" value="{!v.newOwner.Business_Address_Line_2__c}"/>-->
+                    <label class="slds-form-element__label" for="bstreet2">Address Line 2</label>
+                    <lightning:inputField fieldName="Business_Address_Line_2__c" variant="label-hidden" aura:id="bstreet2"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-p-right_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="bcity"><span class="slds-required">*</span>City</label>
+                    <lightning:inputField fieldName="Business_City__c" variant="label-hidden" aura:id="bcity"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="bstate"><span class="slds-required">*</span>State/Province</label>
+                    <lightning:inputField fieldName="Business_State_Province__c" variant="label-hidden" aura:id="bstate"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-right_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="bcountry"><span class="slds-required">*</span>Country</label>
+                    <lightning:inputField fieldName="Business_Country__c" variant="label-hidden" aura:id="bcountry"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="bzip"><span class="slds-required">*</span>Zip/Postal Code</label>
+                    <lightning:inputField fieldName="Business_Zip_Postal_Code__c" variant="label-hidden" aura:id="bzip"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                </lightning:layout>
+                
+                
+                <!-- Home Section -->
+                <div class="slds-page-header slds-text-title_caps slds-m-top_x-large slds-p-around_small">Owner Home Address</div>
+                <lightning:layout multipleRows="true" horizontalAlign="spread">
+
+                <lightning:layoutItem size="6" class="slds-p-right_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="hstreet1"><span class="slds-required">*</span>Address Line 1</label>
+                    <lightning:inputField fieldName="Home_Address_Line_1__c" variant="label-hidden" aura:id="hstreet1"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-p-left_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="hstreet2">Address Line 2</label>
+                    <lightning:inputField fieldName="Home_Address_Line_2__c" variant="label-hidden" aura:id="hstreet2"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-p-right_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="hcity"><span class="slds-required">*</span>City</label>
+                    <lightning:inputField fieldName="Home_City__c" variant="label-hidden" aura:id="hcity"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="hstate"><span class="slds-required">*</span>State/Province</label>
+                    <lightning:inputField fieldName="Home_State_Province__c" variant="label-hidden" aura:id="hstate"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-right_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="hcountry"><span class="slds-required">*</span>Country</label>
+                    <lightning:inputField fieldName="Home_Country__c" variant="label-hidden" aura:id="hcountry"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="hzip"><span class="slds-required">*</span>Zip/Postal Code</label>
+                    <lightning:inputField fieldName="Home_Zip_Postal_Code__c" variant="label-hidden" aura:id="hzip"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="12">    
+					<div class="slds-page-header slds-text-title_caps slds-m-top_x-large slds-p-around_small">Owner Other Information</div>
+               	</lightning:layoutItem>
+            
+
+                <lightning:layoutItem size="6" class="slds-p-right_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="email"><span class="slds-required">*</span>Email Address</label>
+                    <lightning:inputField fieldName="Email__c" variant="label-hidden" aura:id="email"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-p-left_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="mobilePhone">Mobile Phone Number</label>
+                    <lightning:inputField fieldName="Mobile_Phone__c" variant="label-hidden" aura:id="mobilePhone"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-p-right_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="businessPhone">Business Phone Number</label>
+                    <lightning:inputField fieldName="Business_Phone__c" variant="label-hidden" aura:id="businessPhone"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-p-left_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="choiceNumber">Choice Privilege Number (to be enrolled in Choice OwnerElite™ Rewards)</label>
+                    <lightning:inputField fieldName="Choice_Privilege_Number__c" variant="label-hidden" aura:id="choiceNumber"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+            
+                <lightning:layoutItem size="6" class="slds-p-right_small slds-m-top_x-small">
+                    <c:ApplicationFileUpload parentId="{!v.idToPrivateFile.Owner_Resume__c.Id}" section="Owner_Resume__c" label="Owner Resume"/>
+                 </lightning:layoutItem>
+                    
+                
+
+                <lightning:layoutItem size="6" class="slds-p-left_small slds-m-top_x-small">
+                    <c:ApplicationFileUpload parentId="{!v.idToPrivateFile.Personal_Financial_Statement__c.Id}" 
+                    section="Personal_Financial_Statement__c" label="Personal Financial Statement"/>
+                </lightning:layoutItem>
+            
+                <lightning:layoutItem size="6" class="slds-p-right_small slds-m-top_x-small noHover">
+                     <label class="slds-form-element__label" for="Owner_Resume__c">Owner Resume Uploaded?</label>
+                    <lightning:inputField fieldName="Owner_Resume__c" 
+                        class="noCLick"
+                        aura:id="Owner_Resume__c"
+                        variant="label-hidden"
+                     />
+                </lightning:layoutItem>
+                <lightning:layoutItem size="6" class="slds-p-left_small slds-m-top_x-small noHover">
+                     <label class="slds-form-element__label" for="Personal_Financial_Statement__c">Personal Financial Statement Uploaded?</label>
+                    <lightning:inputField fieldName="Personal_Financial_Statement__c"
+                        class="noCLick"
+                        aura:id="Personal_Financial_Statement__c"
+                        variant="label-hidden"
+                     />
+                </lightning:layoutItem>
+
+                
+                <lightning:layoutItem size="12" class="slds-m-top_x-large">
+                <div class="slds-page-header slds-text-title_caps slds-p-around_small">Diversity Information</div>
+                </lightning:layoutItem>
+                    <div class="slds-m-top_x-small">
+                <p><i>Submission of this information is voluntary and refusal to provide it will not subject you to any adverse treatment. 
+                    The information obtained will be kept confidential and may only be used in accordance with the provisions of applicable federal laws, 
+                    executive orders, and regulations, including those which require the information to be summarized and reported to the Federal Government for civil rights enforcement purposes.</i></p>
+                    </div>
+                    
+                    
+                <lightning:layoutItem size="6" class="slds-p-right_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="gender">Gender</label>
+                    <lightning:inputField fieldName="Gender__c" variant="label-hidden" aura:id="gender"/>
+                </lightning:layoutItem>
+
+                
+                <lightning:layoutItem size="6" class="slds-p-left_small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="origin">What is your race or ethnic origin?
+                   
+                        <c:ApplicationHelpText textToDisplay="
+-HISPANIC OR LATINO - 
+A person of Cuban, Mexican, Puerto Rican, South or Central American, or other Spanish culture or origin regardless of race. &lt;br/>
+-WHITE (NOT HISPANIC OR LATINO) -  
+A person having origins in any of the original peoples of Europe, the Middle East, or North Africa. &lt;br/>
+
+-BLACK OR AFRICAN AMERICAN (NOT HISPANIC OR LATINO) - 
+A person having origins in any of the black racial groups of Africa. &lt;br/>
+
+-NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER (NOT HISPANIC OR LATINO) - 
+A person having origins in any of the original peoples of Hawaii, Guam, Samoa, or other Pacific Islands. &lt;br/>
+
+-ASIAN (NOT HISPANIC OR LATINO) - 
+A person having origins in any of the original peoples of the Far East, Southeast Asia, or the Indian Subcontinent, including, for &lt;br/>
+example, Cambodia, China, India, Japan, Korea, Malaysia, Pakistan, the Philippine Islands, Thailand, and Vietnam. &lt;br/>
+
+-AMERICAN INDIAN OR ALASKA NATIVE (NOT HISPANIC OR LATINO) - 
+A person having origins in any of the original peoples of North and South America (including Central America), and who &lt;br/>
+maintain tribal affiliation or community attachment. &lt;br/>
+
+-TWO OR MORE RACES (NOT HISPANIC OR LATINO) -
+All persons who identify with more than one of the above. &lt;br/>
+
+-I DO NOT WANT TO DISCLOSE THIS INFORMATION - 
+I do not want to disclose this information." contentCssClass="bigTop"/>
+                    </label>
+                    <lightning:inputField fieldName="What_is_your_race_or_ethnic_origin__c" variant="label-hidden" aura:id="origin"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-p-right_small slds-m-top_x-small">
+
+                    <label class="slds-form-element__label" for="armedForces">Are you a veteran of U.S. Armed Forces?
+                        <c:ApplicationHelpText textToDisplay="You are a veteran if you have engaged in active duty in the U.S. Armed Forces, or are a National Guard or Reserve enlistee who was called to active duty, and were released under a condition other than dishonorable."/>
+                    </label>
+                    <lightning:inputField fieldName="Are_you_a_veteran_of_U_S_Armed_Forces__c" variant="label-hidden" aura:id="armedForces"/>
+                    
+
+                    
+
+                </lightning:layoutItem>     
+                </lightning:layout>
+                
+                  
+                </lightning:recordEditForm>
+            </form>
+        </lightning:layoutItem>
+    </lightning:layout>
+    </div>
+</aura:if>
+</aura:component>

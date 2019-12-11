@@ -1,0 +1,21 @@
+.THIS.half-heigth{
+    min-height: 46%;
+}
+
+.THIS .new-account-border-t {
+    border-top: 1px solid rgb(221, 219, 218);
+}
+
+.THIS .new-account{
+    padding-top: 2.6rem;
+    font-weight: bold;
+    padding-bottom: 0.6rem;
+}
+
+.THIS .radio-s-width{
+    width:1%;
+}
+
+.THIS .border-bottom-none {
+    border-bottom: none;
+}

@@ -1,0 +1,15 @@
+.THIS .text-inline{
+    display: inline;
+}
+
+.THIS .upload-float{
+    margin-top: -30px;
+    margin-bottom: .5rem;
+}
+
+.THIS .maxHeight{
+    max-height: 300px;
+}
+.THIS .pointer{
+	cursor: pointer;
+}

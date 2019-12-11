@@ -1,0 +1,116 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="ApplicationContainerController" >
+    <aura:attribute name="step" type="Integer" default="0"/>
+    <aura:attribute name="appRecord" type="Application__c" default="{'sobjectType' : 'Application__c'}"/>
+    <aura:attribute name="legalRep" type="Applicant__c"/>
+    <aura:attribute name="applications" type="Application__c[]"/>
+    <aura:attribute name="applicationSet" type="Boolean" default="false"/>
+    <aura:attribute name="idToPrivateFiles" type="Map"/>
+    <aura:attribute name="sectionToUpdateMap" type="Map"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.onPageLoad}"/>
+    <aura:handler name="change" value="{!v.appRecord}" action="{!c.init}"/> 
+    
+    <!-- PAGE HEADER -->
+    <div class="slds-card slds-m-bottom_small">
+        <div class="slds-page-header">
+          <!-- LAYOUT GRID -->
+          <div class="slds-grid">
+            <!-- GRID COL -->
+            <div class="slds-col slds-has-flexi-truncate">
+              <!-- HEADING AREA -->
+        	<lightning:layout class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate">
+                <lightning:layoutItem >
+                    <lightning:icon iconName="custom:custom18" alternativeText="Application"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="horizontal-small">
+                    <div class="page-section page-header">
+                        <aura:if isTrue="{!v.step != 0}">
+                            <h2 class="slds-text-heading--large">Application - {!v.appRecord.Name}</h2>
+                        </aura:if>
+                        <aura:if isTrue="{!v.step == 0}">
+                        <h2 class="slds-text-heading--large">Select an Application</h2>
+                        
+                        </aura:if>
+                    </div>   
+                </lightning:layoutItem>
+     
+            </lightning:layout>
+            <aura:if isTrue="{!v.step == 0}">
+            <p class="slds-m-top_small">Click on a button below to begin the application</p>
+
+
+            </aura:if>
+                        <aura:if isTrue="{!v.step != 0}">
+                            <div class="float-right slds-page-header__title">
+                            <strong>
+                                <aura:if isTrue="{!v.appRecord.Application_Expires_in__c == 'In Progress'}">
+                                     <ui:outputText value="14 Days until expiration "  /> 
+                                </aura:if>
+                                <aura:if isTrue="{!v.appRecord.Application_Expires_in__c == 'Not Started'}">
+                                    <ui:outputText value="{!v.appRecord.Application_Expires_in__c}"  /> 
+                                </aura:if>
+
+                                <aura:if isTrue="{!and(v.appRecord.Application_Expires_in__c != 'In Progress',v.appRecord.Application_Expires_in__c != 'Not Started' )}">
+                                    <ui:outputText value="{!v.appRecord.Application_Expires_in__c + ' until expiration'}"  /> 
+                                </aura:if>
+                                
+
+                               
+                            </strong>
+                            </div>
+                        </aura:if>
+            </div>
+            <!-- ACTION BUTTONS -->
+            <!-- / ACTION BUTTONS -->
+          </div>
+          <!-- / LAYOUT GRID -->
+          <!-- PAGE HEADER DETAIL ROW -->
+          <aura:if isTrue="{!v.step != 0}">  
+
+            
+            <ul class="slds-grid slds-page-header__detail-row">
+                <c:ApplicationProgressIndicator currentStep="{!v.step}"/>   
+            </ul>
+          </aura:if>
+          <!-- / PAGE HEADER DETAIL ROW -->
+    
+        </div>
+    </div>
+    <!-- / PAGE HEADER -->
+    
+
+    <!-- Component that lets you select an Application -->
+    <aura:if isTrue="{!v.step == 0}">
+    	<c:ApplicationSelection appRecord="{!v.appRecord}" applications ="{!v.applications}"/>
+                <aura:if isTrue="{!v.applications.length  == 0}">
+        <p class="slds-m-top_small slds-page-header__title">There are currently no active applications.</p>
+        </aura:if>
+    </aura:if>
+    <!-- Sections -->
+    <aura:if isTrue="{!v.step == 1}">
+        <c:ApplicationHotelInfo newApplication="{!v.appRecord}" step="{!v.step}" 
+            idToPrivateFiles="{!v.idToPrivateFiles}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.step == 2}">
+        <c:ApplicationLegalRepresentative newApplication="{!v.appRecord}" legalRep="{!v.legalRep}" step="{!v.step}" idToPrivateFiles="{!v.idToPrivateFiles}"/>
+    </aura:if>
+
+    <aura:if isTrue="{!v.step == 3}">
+    	<c:ApplicationEntity newApplication="{!v.appRecord}" step="{!v.step}"
+            idToPrivateFiles="{!v.idToPrivateFiles}" sectionToUpdateMap="{!v.sectionToUpdateMap}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.step == 4}">
+        <c:ApplicationOwners newApplication="{!v.appRecord}" step="{!v.step}"
+            idToPrivateFiles="{!v.idToPrivateFiles}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.step == 5}">
+        <c:ApplicationHotelExperience newApplication="{!v.appRecord}" step="{!v.step}" idToPrivateFiles="{!v.idToPrivateFiles}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.step == 6}">
+        <c:ApplicationSiteControl newApplication="{!v.appRecord}" step="{!v.step}" idToPrivateFiles="{!v.idToPrivateFiles}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.step == 7}">
+        <c:ApplicationOtherInfo newApplication="{!v.appRecord}" step="{!v.step}" applications ="{!v.applications}" idToPrivateFiles="{!v.idToPrivateFiles}"/>
+    </aura:if>
+    
+</aura:component>

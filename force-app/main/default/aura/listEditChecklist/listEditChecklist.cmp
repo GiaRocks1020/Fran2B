@@ -1,0 +1,107 @@
+<aura:component  implements="force:lightningQuickAction,force:hasRecordId" access="global" controller="CreateChecklistCtrl"> 
+    <lightning:navigation aura:id="navService"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>  
+    <aura:attribute name="checklistItems" type="Object[]" />  
+    <aura:attribute name="filteredData" type="Object[]" />
+    <aura:attribute name="flatObjects" type="Object[]" />  
+    <aura:attribute name="LineItemCount" type="Integer" />
+    <aura:attribute name="categoryList" type="String[]" />
+    <aura:attribute name="subCategoryList" type="String[]" />
+    <aura:attribute name="groupList" type="String[]" />
+    <aura:attribute name="categoryMap" type="Object[]"/>
+    <aura:attribute name="subCategoryMap" type="Object[]"/>
+    <aura:attribute name="showspinner" type="boolean" />
+    <aura:attribute name="showSubCategory" type="boolean" />
+
+
+    <aura:attribute name="LibraryFilter" type="String" />  
+    <aura:html tag="style">
+        .slds-modal__container {
+        min-width: 70vw;
+        }
+        .modal-body{
+        height : 400px !important;
+        max-height: 400px !important;
+        }
+    </aura:html>
+    <div class="slds-grid slds-gutters">
+            <aura:if isTrue="{!v.showspinner}">   
+                <lightning:spinner alternativeText="Loading" size="medium"/>
+            </aura:if>
+        <div class="slds-box">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large slds-list-builder" aria-labelledby="id-of-modalheader-h2" aria-modal="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="id-of-modalheader-h2" class="slds-text-heading_medium">Checklist Items</h2>
+                </header>
+            <div class="slds-modal__content slds-grid slds-grow" id="modal-content-id-1">
+                <div class="slds-grid slds-grid_vertical">
+                    <div class="slds-grid slds-wrap">
+                    <div class="slds-p-vertical_x-small slds-p-horizontal_large slds-shrink-none slds-theme_shade slds-size_1-of-1 slds-col slds-p-top_small">
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label slds-assistive-text" for="combobox-unique-id-2">Search</label>
+                                <div class="slds-form-element__control">
+                                    <div role="none" onkeyup="{!c.filterLibraryItems}" tabindex="0" >
+                                        <lightning:input aura:id="LibraryFilterId" onfocus="{!c.setValuetoComponent}"  value="{!v.LibraryFilter}" type="text" id="combobox-unique-id-2" aria-autocomplete="list" role="textbox" placeholder="Search Checklist Items." />                                            
+                                    </div>
+                                </div>
+                        </div>
+                        
+                        </div>
+                    </div>
+                        <div class="slds-scrollable slds-grow">
+                            <div class="slds-scrollable_none">  
+                                    <aura:if isTrue="{!not(empty(v.filteredData))}"> 
+                                            <aura:iteration items="{!v.filteredData}" var="option" indexVar="index">
+                                            <div class="slds-col slds-size_1-of-1 slds-p-top_small">
+                                                    <h3 class="slds-section__title">
+                                                         <u>   <span class="slds-truncate" title="{!option.checklistType}"> {!option.checklistType}</span></u>
+                                                    </h3>
+                                                    <aura:iteration items="{!option.checklistItems}" var="citems" indexVar="cindex">                            
+                                                    <lightning:recordEditForm objectApiName="PIP_Checklist_Item__c">
+                                                    <div class="slds-grid slds-wrap slds-border_bottom" tabindex="0"  id="{!cindex+'.'+index}" >                                                        
+                                                        <div class="slds-size_1-of-2 slds-p-right_medium">
+                                                                <label class="slds-form-element__label" for="Notes">{!citems.pipCI.Question__c}  ({!citems.pipCI.Number_of_Photos__c} photos minimum.)</label>
+                                                                <lightning:inputField aura:id="Notes" fieldName="Notes__c" value="{!citems.pipCI.Notes__c}" variant="label-hidden"/>
+                                                        </div>
+                                                        <div class="slds-size_1-of-2 slds-p-right_medium">
+                                                                <lightning:inputField fieldName="Measurement__c" value="{!citems.pipCI.Measurement__c}"/>
+                                                        </div>
+                                                        <div class="slds-size_1-of-2 slds-p-right_medium">
+                                                                <lightning:inputField fieldName="Improvement__c" value="{!citems.pipCI.Improvement__c}"/>
+                                                        </div>
+                                                        <div class="slds-size_1-of-2 slds-p-right_medium">
+                                                                <lightning:inputField fieldName="Acceptable__c" value="{!citems.pipCI.Acceptable__c}"/>
+                                                        </div>
+                                                        <div class="slds-size_1-of-2 slds-p-right_medium">
+                                                                <lightning:inputField fieldName="Type__c" value="{!citems.pipCI.Type__c}"/>
+                                                        </div> 
+                                                    </div>
+                                                    </lightning:recordEditForm>
+                                                </aura:iteration>
+                                            </div>
+                                        </aura:iteration>  
+                                        <aura:set attribute="else">
+                                                <div class="slds-col slds-size_1-of-1 slds-p-top_small">
+                                                        <div class="slds-col slds-size_1-of-1 slds-p-top_small">
+                                                                <h3 class="slds-section__title">
+                                                                     <u>   <span class="slds-truncate" title="There are no Checkklist/Library Items."> There are no Checkklist Library Items.</span></u>
+                                                                </h3>
+                                                        </div>
+                                                </div>
+                                        </aura:set>
+                                        </aura:if>  
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <button class="slds-button slds-button_neutral" onclick="{!c.closeModal}">Cancel</button>
+                            <lightning:button variant="brand" label="Save" title="Create Line Items" onclick="{!c.saveAndCancel}"/>
+                        </footer>
+                    </div>        
+                </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,82 @@
+<aura:component controller="LeadConvertAccountListController">
+	<aura:attribute name="accountWrappers" type="Object" />
+    <aura:attribute name="accountColumns" type="List" />
+    <aura:attribute name="contact" type="Object" />
+    <aura:attribute name="showRadio" type="Boolean" default="true"/>
+    <aura:attribute name="lead" type="Object"/>
+    <aura:attribute name="contactAccounts" type="Object"/>
+    
+    <aura:attribute name="noAccounts" type="Boolean" />
+    <aura:attribute name="isNewAccount" type="Boolean" />
+    <aura:attribute name="screen" type="Integer"/>
+    <aura:attribute name="selectedId" type="String"/>
+    <aura:attribute name="selectedAccount" type="Account"/>
+    <aura:attribute name="dataLoaded" type="Boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+	<aura:handler name="change" value="{!v.selectedId}" action="{!c.checkSelection}"/>    
+    
+    <article class="slds-card slds-card_boundary half-heigth">
+    <lightning:card title="{!$Label.c.Lead_Convert_Account_Title_2}" iconName="standard:account" class="half-heigth">
+        <aura:if isTrue="{!!v.dataLoaded}">
+        	<lightning:spinner variant="brand" size="large" alternativeText="Fetching data"	/>
+        </aura:if>
+		<table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        <!-- column for radio -->
+                        <aura:if isTrue="{!v.showRadio}">
+                            <th scope="col"/>
+                        </aura:if>
+                    	<aura:iteration items="{!v.accountColumns}" var="ac">
+                        	<th scope="col">
+                                <div class="slds-truncate" title="{!ac.label}">{!ac.label}</div>
+                            </th>
+                    	</aura:iteration>
+                        	<th scope="col">
+                                {!$Label.c.Lead_Convert_Percent}
+                        	</th>
+                    </tr>
+                </thead>
+                <tbody>
+                	<aura:iteration items="{!v.accountWrappers}" var="aw">
+                        <aura:iteration items="{!aw.sObjectRecords}" var="a">
+                        <c:AccountRow account="{!a}" apiNames="{!v.accountColumns}" showRadio="{!v.showRadio}" 
+                                      selectedId="{!v.selectedId}" selectedAccount="{!v.selectedAccount}" percent="{!aw.matchScore}" type="l"/>
+                        </aura:iteration>
+                    </aura:iteration>
+                </tbody>            
+            </table>
+            <aura:if isTrue="{!empty(v.accountWrappers)}">
+                <div class="slds-card__header slds-grid slds-text-heading--small">
+                	{!$Label.c.Lead_Convert_No_Account_Found}
+            	</div>
+            </aura:if>
+        <br/><br/><br/>
+			<table class="slds-table slds-table_bordered slds-table_cell-buffer border-bottom-none">
+                <tbody>
+                    <tr>
+                            <th class="new-account-border-t radio-s-width new-account">    
+                            <label class="slds-radio">   
+                                <ui:inputRadio aura:id="newAccount" value="{!v.isNewAccount}" change="{!c.setNewAccount}"/>
+                                <span class="slds-radio--faux"></span>
+                                <span class="slds-assistive-text">Select Row</span>
+                            </label>
+                           	</th>
+                            <th class="new-account-border-t new-account">
+                         		New Account
+                        	</th>
+							<aura:iteration items="{!v.accountColumns}" var="cc" indexVar="i">
+                                	<aura:if isTrue="{!greaterthan(i,0)}">
+                                    <th class="new-account-border-t">
+                                        <!-- Dummy rows so new account matches -->
+                                    </th>
+                                    </aura:if>
+
+                            </aura:iteration>
+                    </tr>
+                </tbody>            
+            </table> 
+       </lightning:card>
+    </article>
+</aura:component>

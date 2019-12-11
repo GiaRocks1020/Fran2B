@@ -1,0 +1,9 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+    <aura:attribute name="applications" type="Application__c[]"/>
+    <aura:attribute name="appRecord" type="Application__c"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <aura:iteration items="{!v.applications}" var="app">
+        <lightning:button variant="brand" label="{!app.Name}" title="{!app.Name}" value="{!app}" onclick="{! c.handleClick}" class="slds-m-top_x-small"/>
+    </aura:iteration>
+</aura:component>

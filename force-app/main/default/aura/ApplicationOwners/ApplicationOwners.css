@@ -1,0 +1,13 @@
+.THIS b{
+    color: #5a5a5a;
+}
+
+.THIS .centered{
+	text-align: center;
+}
+.THIS .pointer{
+	cursor: pointer;
+}
+.THIS .smallPadding{
+	padding-left: 10px;
+}

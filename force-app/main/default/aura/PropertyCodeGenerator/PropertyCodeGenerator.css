@@ -1,0 +1,17 @@
+.THIS .smallMargin{
+	margin-top: 16px;
+}
+
+.THIS .bold{
+	font-weight: bold;
+}
+
+.THIS .smallLeftPadding{
+	padding-left: 5px;
+}
+
+
+.THIS.slds-spinner_container {
+    top: 37% !important;
+    bottom: 37% !important;
+}

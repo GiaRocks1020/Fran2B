@@ -1,0 +1,32 @@
+.THIS lightning-textarea label.slds-form-element__label{
+    display:none;
+}
+
+
+.THIS .noCLick{
+	pointer-events:none!important;
+}
+
+
+.THIS .noHover:hover{
+	cursor: not-allowed;
+}
+
+.THIS .slds-checkbox_faux{
+	    background-color: rgb(233, 234, 236)!important;
+    border-color: rgb(196, 198, 202)!important;
+
+     width: 1rem;
+    height: 1rem;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    border: 1px solid rgb(212, 212, 212);
+    border-radius: .125rem;
+    background: rgb(255, 255, 255);
+    transition: border .1s linear,background-color .1s linear;
+}
+
+.THIS .max-width{
+    width: 100%;
+}

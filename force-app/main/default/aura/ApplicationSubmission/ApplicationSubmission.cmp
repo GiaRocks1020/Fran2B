@@ -1,0 +1,64 @@
+<aura:component >
+	<aura:attribute name="newApplication" type="Application__c" default="{'sobjectType' : 'Application__c'}"/>
+    <aura:attribute name="applications" type="Application__c[]"/>
+    <aura:attribute name="today" type="Date" default="" />
+	<aura:handler event="c:ApplicationSubmit" action="{!c.handleSubmit}"/>
+	<aura:handler name="init" value="{!this}" action="{!c.initData}"/>
+
+<lightning:overlayLibrary aura:id="overlayLib"/>
+	<lightning:layout class="slds-align_absolute-center">
+        <lightning:layoutItem padding="around-small" size="12">
+            <form class="slds-form--stacked">
+                <lightning:recordEditForm 
+                	aura:id="editForm" 
+                	recordId="{!v.newApplication.Id}" 
+                	objectApiName="Application__c"
+                    onsuccess="{!c.onSubmitSuccess}"
+                    onError="{!c.onError}"
+                    onload="{!c.onLoad}">
+                    <lightning:messages/>
+
+                <!--Hidden fields that need to be set behind the scenes.-->
+
+                <lightning:inputField fieldName="Section__c" variant="label-hidden" aura:id="section" class="slds-hide"/>
+
+				<lightning:layoutItem size="12" class="slds-hide">
+                	<lightning:inputField fieldName="Acknowledgement_Text__c"  value ="{!$Label.c.Application_Acknowledgement}"  />
+				</lightning:layoutItem>
+
+				<lightning:layoutItem size="12" class="slds-hide">
+                	<lightning:inputField fieldName="Status__c"  value ="Submitted" />
+				</lightning:layoutItem>
+
+
+				
+
+            	<lightning:layoutItem size="12" >
+            		<ui:outputRichText class="slds-text-longform" value="{!$Label.c.Application_Acknowledgement}"/>
+            	</lightning:layoutItem>
+
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                	<label class="slds-form-element__label " for="acknowledge"><span class="slds-required">*</span>By Checking this checkbox, I agree to everything above</label>
+                	<lightning:inputField  aura:id="acknowledge"
+                                             fieldName="Acknowledgement__c"
+                                             variant="label-hidden" />
+				</lightning:layoutItem>
+
+				<lightning:layoutItem size="6" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label " for="Type_your_name_here__c"><span class="slds-required">*</span>Name</label>
+                	<lightning:inputField aura:id="Type_your_name_here__c" fieldName="Type_your_name_here__c" variant="label-hidden"/>
+                </lightning:layoutItem>
+                
+				<lightning:layoutItem size="4" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label " for="Today_Date__c"><span class="slds-required">*</span>Today's Date</label>
+                	<lightning:inputField aura:id="Today_Date__c" fieldName="Today_Date__c"  variant="label-hidden" disabled="true"/>
+				</lightning:layoutItem>
+
+            	</lightning:recordEditForm>
+            </form>
+        </lightning:layoutItem>
+    </lightning:layout>
+
+
+
+</aura:component>

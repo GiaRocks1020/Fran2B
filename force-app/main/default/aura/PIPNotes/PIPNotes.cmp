@@ -1,0 +1,86 @@
+<!--
+ - @description Used to display Notes in a related list.
+ -
+ - @author Zach French
+ - @date 9/24/19
+ -->
+
+<aura:component description="PIP Notes to be displayed based on related records."
+                implements="flexipage:availableForRecordHome,force:hasRecordId,lightning:availableForFlowScreens"
+                controller="PIPNotesHelper"
+                access="global">
+
+    <!-- Attributes -->
+    <aura:attribute name="objectRecord" type="Object"/>
+    <aura:attribute name="recordLoadError" type="String"/>
+    <aura:attribute name="disableButton" type="Boolean" default="false" />
+    <aura:attribute name="notes" type="List" />
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="actions" type="List"/>
+    <aura:attribute name="rowActionObject" type="Object"/>
+    <aura:attribute name="relatedListName" type="String" default="Related Notes"/>
+    <aura:attribute name="viewAllUrl" type="String"/>
+    <aura:attribute name="parentRelationshipAPIName" type="String" default="CustomerContacts__r"/>
+    <aura:attribute name="iconName" type="String" default="standard:custom"/>
+    <aura:attribute name="selectedRowAction" type="Object"/>
+
+    <!-- Events -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="onSelectedRowActionEvent" event="c:SelectedRowAction" action="{!c.processRowAction}"/>
+
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <lightning:navigation aura:id="navigation"/>
+
+
+    <force:recordData aura:id="recordHandler"
+                      recordId="{!v.recordId}"
+                      fields="Id"
+                      targetFields="{!v.objectRecord}"
+                      targetError="{!v.recordLoadError}"
+                      recordUpdated="{!c.recordUpdate}"
+                      mode="EDIT"
+    />
+
+    <lightning:layout multipleRows="true" horizontalAlign="center" >
+        <lightning:card class="slds-card_boundary" iconName="{!v.iconName}">
+            <aura:set attribute="actions">
+                <lightning:button label="Refresh" title="Refresh" onclick="{!c.refreshCurrentView}" />
+            </aura:set>
+            <aura:set attribute="title">
+                <b><a class="slds-card__header-link" onclick="{!c.handleGotoRelatedList}">{!(v.relatedListName) +
+                        ' (' + (v.notes.length) + ')'}</a></b>
+            </aura:set>
+            <aura:set attribute="footer">
+                <!--
+                <aura:if isTrue="{!not(empty(v.notes))}">
+                    <a onclick="{!c.handleGotoRelatedList}">View All</a>
+                </aura:if>
+                -->
+            </aura:set>
+
+            <aura:if isTrue="{!v.disableButton}">
+
+                <div class="spinnerHolder">
+                    <lightning:spinner aura:id="processSpinner" alternativeText="Loading Notes" />
+                </div>
+
+            </aura:if>
+
+            <p class="slds-p-horizontal_small">
+                <c:searchDatatable
+                        aura:id="noteTable"
+                        arrayToPaginate="{!v.notes}"
+                        maxSelection="0"
+                        columns="{!v.columns}"
+                        maxRecordsPerPage="5"
+                        resizeColumnDisabled="false"
+                        showSearchField="false"
+                        showOnRowAction="true"
+                        actions="{!v.actions}"
+                        hideCheckboxColumn="true"
+                />
+            </p>
+        </lightning:card>
+    </lightning:layout>
+
+</aura:component>

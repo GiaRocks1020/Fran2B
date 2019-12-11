@@ -1,0 +1,22 @@
+.THIS .new-contact-border-t {
+    border-top: 1px solid rgb(221, 219, 218);
+}
+
+.THIS .new-contact{
+    padding-top: 2.6rem;
+    font-weight: bold;
+    padding-bottom: 0.6rem;
+}
+
+.THIS.full-height{
+    min-height: 94%;
+}
+
+.THIS .radio-s-width{
+    width:1%;
+}
+
+.THIS .reminder{
+    font-style: italic;
+    color: red;
+}

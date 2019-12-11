@@ -1,0 +1,117 @@
+<aura:component description="Datatable with pagination">
+    <!-- Incoming Attributes -->
+    <aura:attribute name="arrayToPaginate" type="List" required="true"/>
+    <aura:attribute name="filteredArrayToPaginate" type="List" required="true"/>
+    <aura:attribute name="arrayPaginated" type="List" required="true"/>
+    <aura:attribute name="maxRecordsPerPage" type="Integer" default="8"/>
+    <aura:attribute name="maxSelection" type="Integer"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="actions" type="List"/>
+    <aura:attribute name="searchTitle" type="String"/>
+    <aura:attribute name="resizeColumnDisabled" type="Boolean" default="false"/>
+    <aura:attribute name="addIconButton" type="Boolean" default="false"/>
+    <aura:attribute name="iconName" type="String" default="utility:add"/>
+    <aura:attribute name="showSelectionCount" type="Boolean" default="false"/>
+    <aura:attribute name="showSearchField" type="Boolean" default="true"/>
+    <aura:attribute name="showOnRowAction" type="Boolean" default="false"/>
+    <aura:attribute name="hideCheckboxColumn" type="Boolean" default="false"/>
+    <aura:attribute name="sortedBy" type="String"/>
+
+    <!-- Local Attributes -->
+    <aura:attribute name="currentPage" type="Integer" access="private"/>
+    <aura:attribute name="totalPages" type="Integer" access="private"/>
+    <aura:attribute name="bypassSelection" type="Boolean" default="false"/>
+    <aura:attribute name="initLoad" type="Boolean" default="true"/>
+    <aura:attribute name="selection" type="List" />
+    <aura:attribute name="selectedRowData" type="Object[]"/>
+    <aura:attribute name="searchValue" type="String"/>
+    <aura:attribute name="recordIdtoPageMap" type="Map"/>
+    <aura:attribute name="sortedDirection" type="String" default="asc"/>
+    <aura:attribute name="defaultSortDirection" type="String" default="asc"/>
+
+    <!-- Events -->
+    <aura:registerEvent name="oSelectedRowsEvent" type="c:SelectedRowsEvent"/>
+    <aura:registerEvent name="oSelectedSearchBtnEvent" type="c:SelectedSearchBtnChange"/>
+    <aura:registerEvent name="onSelectedRowActionEvent" type="c:SelectedRowAction"/>
+    <aura:handler name="change" value="{!v.selectedRowData}" action="{!c.handleSelectedRowChange}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:method name="reInit" action="{!c.doInit}"/>
+
+    <!-- Search Input -->
+    <aura:if isTrue="{!v.showSearchField}">
+        <div  class="align-bottom">
+             <span class="vertical-align-center"><strong>{!v.searchTitle}</strong>
+                <lightning:helptext content="Search by all column headers in the table below"
+                                    iconName="utility:info"
+                                    class="slds-m-left--x-small"
+                />
+             </span>
+        </div>
+        <div class="slds-p-bottom_small slds-p-top_small">
+            <lightning:layout>
+                <lightning:layoutItem class="align-top">
+                    <lightning:input  value="{!v.searchValue}"
+                                      name="searchList"
+                                      onchange="{!c.search}"
+                                      placeholder="Search"
+                                      variant = "label-hidden"
+                    />
+                </lightning:layoutItem>
+                <aura:if isTrue="{!v.addIconButton}">
+                    <lightning:layoutItem class="align-top">
+                        <lightning:buttonIcon onclick="{!c.handleButtonClickEvent}" size="medium" iconName="{!v.iconName}"/>
+                    </lightning:layoutItem>
+                </aura:if>
+            </lightning:layout>
+        </div>
+    </aura:if>
+
+    <!-- Data table -->
+    <lightning:layout multipleRows="true" horizontalAlign="center">
+        <lightning:layoutItem size="12">
+            <aura:if isTrue="{!v.showSelectionCount}">
+                <div class="slds-clearfix">
+                    <div class="slds-clearfix">
+                        <div class="slds-float_right slds-text-color_weak">
+                            {!v.selection.length} Selected
+                        </div>
+                    </div>
+                </div>
+            </aura:if>
+            <lightning:datatable
+                    aura:id="dataTable"
+                    keyField="Id"
+                    data="{!v.arrayPaginated}"
+                    selectedRows="{!v.selection}"
+                    columns="{!v.columns }"
+                    onrowselection="{!c.onRowSelection}"
+                    width="100%"
+                    resizeColumnDisabled="{!v.resizeColumnDisabled}"
+                    maxRowSelection="{!v.maxSelection}"
+                    onsort="{!c.updateColumnSorting}"
+                    sortedBy="{!v.sortedBy}"
+                    sortedDirection="{! v.sortedDirection }"
+                    defaultSortDirection="{!v.defaultSortDirection}"
+                    onrowaction="{!c.handleRowAction}"
+                    hideCheckboxColumn="{!v.hideCheckboxColumn}"
+
+            />
+        </lightning:layoutItem>
+
+        <!-- Pagination -->
+        <lightning:layoutItem padding="around-small" flexibility="auto">
+            <aura:if isTrue="{!v.arrayToPaginate.length > 0}">
+                <aura:if isTrue="{!v.currentPage > 1}">
+                    <lightning:buttonIcon iconName="utility:chevronleft" variant="border-filled" onclick="{!c.previousPage}" size="small"/>
+                </aura:if>
+                <span class="slds-p-horizontal_small">
+                    {!v.currentPage} of {!v.totalPages}
+                </span>
+                <aura:if isTrue="{!v.currentPage &lt; v.totalPages}">
+                    <lightning:buttonIcon iconName="utility:chevronright" variant="border-filled" onclick="{!c.nextPage}" size="small"/>
+                </aura:if>
+            </aura:if>
+        </lightning:layoutItem>
+    </lightning:layout>
+
+</aura:component>

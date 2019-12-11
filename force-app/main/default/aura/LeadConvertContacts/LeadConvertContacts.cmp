@@ -1,0 +1,90 @@
+<aura:component controller="LeadConvertContactListController">
+    <aura:attribute name="contactWrappers" type="Object"/>
+    <aura:attribute name="contactColumns" type="List"/>
+    <aura:attribute name="screen" type="Integer"/>
+    <aura:attribute name="contact" type="Contact"/>
+    <aura:attribute name="lead" type="Object"/>
+    <aura:attribute name="contactList" type="List"/>
+    <aura:attribute name="selectedId" type="String"/>
+    
+    <aura:attribute name="isNewContact" type="Boolean"/>
+    <aura:attribute name="dataLoaded" type="Boolean" default="false"/>
+    
+    <aura:handler name="change" value="{!v.lead}" action="{!c.init}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <aura:handler name="change" value="{!v.selectedId}" action="{!c.checkSelection}"/>
+       <div class="slds-card-wrapper slds-scrollable--x">
+          <header>
+            <h2 class="slds-text-heading_medium">Lead Convert Step 1 of 3</h2>
+           </header> <br/>
+          <article class="slds-card slds-card_boundary">
+          <!--<div class="slds-card__body slds-card__body_inner">-->
+            <aura:if isTrue="{!!v.dataLoaded}">
+            	<lightning:spinner variant="brand" size="large" alternativeText="Fetching data"/>
+            </aura:if>
+            <div class="slds-card__header slds-grid slds-text-heading--small">
+                <h2>
+                    <lightning:icon iconName="standard:contact" size="small" class="slds-media__figure"/>
+                    {!$Label.c.Lead_Convert_Contact_Title}
+                </h2>
+            </div>
+            <table class="slds-table slds-table_bordered slds-table_cell-buffer border-bottom-none">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        <th scope="col"/>
+                    	<aura:iteration items="{!v.contactColumns}" var="cc">
+                        	<th scope="col">
+                                <div class="slds-truncate" title="{!cc.label}">{!cc.label}</div>
+                            </th>
+                    	</aura:iteration>
+                        <th scope="col">
+                            {!$Label.c.Lead_Convert_Percent}
+                        </th>
+                        <th>
+                            <!-- Column for Button -->
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                	<aura:iteration items="{!v.contactWrappers}" var="cw">
+                        <aura:iteration items="{!cw.sObjectRecords}" var="c">
+                        <c:ContactRow contact="{!c}" apiNames="{!v.contactColumns}" selectedId="{!v.selectedId}" 
+                                      selectedContact="{!v.contact}" percent="{!cw.matchScore}"/>
+                        </aura:iteration>
+                    </aura:iteration>
+                </tbody>
+            </table>
+            <aura:if isTrue="{!empty(v.contactWrappers)}">
+                <div class="slds-card__header slds-grid slds-text-heading--small">
+                	{!$Label.c.Lead_Convert_No_Contact_Found}
+            	</div>
+            </aura:if>
+            <br/><br/><br/><br/>
+            <table class="slds-table slds-table_bordered slds-table_cell-buffer border-bottom-none">
+                <tbody>
+                    <tr>
+                        <th class="new-contact-border-t radio-s-width new-contact">    
+                            <label class="slds-radio">   
+                                <ui:inputRadio aura:id="{!v.contact.Id}" value="{!v.isNewContact}" change="{!c.setNewContact}"/>
+                                <span class="slds-radio--faux"></span>
+                                <span class="slds-assistive-text">Select Row</span>
+                            </label>
+                        </th>
+                        <th class="new-contact-border-t new-contact">
+                            New Contact
+                        </th>
+                        <aura:iteration items="{!v.contactColumns}" var="cc" indexVar="i">
+                            <th class="new-contact-border-t">
+                                <!--Create dummy columns so length matches table above-->
+                            </th>
+                        </aura:iteration>
+                        <th class="new-contact-border-t">
+                            <!--Create dummy column for button-->
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        <!--</div>-->
+           </article>
+    </div>
+</aura:component>

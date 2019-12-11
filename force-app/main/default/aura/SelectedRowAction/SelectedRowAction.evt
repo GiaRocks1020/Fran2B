@@ -1,0 +1,10 @@
+<!--
+ - @description
+ -
+ - @author Zach French
+ - @date 2019-09-24
+ -->
+
+<aura:event type="COMPONENT" description="SelectedRowAction">
+    <aura:attribute name="rowActionObject" type="Object" />
+</aura:event>

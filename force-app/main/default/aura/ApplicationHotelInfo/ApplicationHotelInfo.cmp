@@ -1,0 +1,198 @@
+<aura:component controller="ApplicationHotelInfoController">
+    <aura:attribute name="newApplication" type="Application__c" default="{'sobjectType' : 'Application__c'}"/>
+    <aura:attribute name="applicationTypes" type="Object"/>
+    <aura:attribute name="idToPrivateFiles" type="Map"/>
+    <aura:attribute name="showDualBrand" type="Boolean"/>
+    <aura:attribute name="toggleInput" type="Boolean" default="false"/>  
+    <aura:attribute name="step" type="Integer"/>
+    <aura:attribute name="showSpinner" type="Boolean" default="true" />
+    <aura:attribute name="showPropCode" type="Boolean" default="false" />
+    
+ 
+    <div class="slds-card-wrapper">
+    <div class="slds-page-header__detail slds-grid slds-text-heading_medium">
+		<h2>Hotel Information</h2> </div>
+    <hr class="slds-m-top_small"/>
+
+             
+	<lightning:layout class="">
+        <lightning:layoutItem padding="around-large" size="8">
+            <form class="slds-form_stacked">
+
+            <p>Choice Hotels, Inc. (“Choice”) is pleased to consider your Franchise Application.  
+            Please answer all fields completely and accurately. In order to process your application promptly, please supply all requested documentation for your property and ownership entity. 
+            If you have any questions, please do not hesitate to contact your Director of Franchise Development.
+            </p>
+            <p>
+            <br/>
+            <i>
+            Choice reserves the right to approve or deny this Franchise Application. 
+            This is not an offer, and you have not yet been granted a franchise to operate as any of the Choice franchises. 
+            There is no binding obligation on either party unless and until both Choice and you have executed a Franchise Agreement. 
+            Any expenses you incur in constructing, renovating or operating the hotel are at your sole risk.
+            </i>
+            <br/>
+            <br/>
+            <strong>
+                Please note this application expires 14 days from the date it was initiated.
+            </strong>
+             Press the Next button to save your updates across each page.
+            
+            </p>
+                
+            <aura:if isTrue="{!v.showSpinner}">
+        		<lightning:spinner />
+    		</aura:if>
+            <lightning:recordEditForm aura:id="editForm" recordId="{!v.newApplication.Id}" objectApiName="Application__c" 
+                 onload="{!c.onInit}" onsuccess="{!c.onSuccess}" onerror="{!c.onError}">         
+            <aura:if isTrue="{!v.toggleInput}">
+            	<lightning:messages/>
+                <aura:set attribute="else">
+                	<lightning:messages/>
+                </aura:set>
+            </aura:if>
+            <lightning:inputField fieldName="Section__c" variant="label-hidden" aura:id="section" class="slds-hide"/>
+            
+            <div class="slds-page-header slds-m-top_x-large slds-text-title_caps slds-p-around_small">Brand Information</div>
+
+          <lightning:overlayLibrary aura:id="overlayLib"/>
+            
+            <div class="slds-m-top_x-small">
+                <label class="slds-form-element__label" for="appType">
+                    <span class="slds-required">*</span>
+                    Application Type
+                
+                        <c:ApplicationHelpText textToDisplay="{!$Label.c.Application_Type_Help_Text}" wrapperCssClass="zindex6"  />
+                </label>
+                <lightning:inputField aura:id="appType" fieldName="Application_Type__c" variant="label-hidden" class="slds-m-top_x-small" onchange="{!c.showPropertyCode}"/>
+            </div>
+            <aura:if isTrue="{!v.showPropCode}">
+            <div class="slds-m-top_x-small">
+                <lightning:inputField aura:id="propCode" fieldName="Property_Code__c" class="slds-m-top_x-small"/>
+            </div>
+            </aura:if>
+
+            <div class="slds-m-top_x-small">
+                <label class="slds-form-element__label" for="brand"><span class="slds-required slds-m-top_x-small">*</span>Brand</label>
+                <lightning:inputField aura:id="brand" fieldName="Hotel_Brand__c" variant="label-hidden" class="slds-m-top_x-small"/>
+            </div>
+
+            <div class="slds-m-top_x-small">
+                <label class="slds-form-element__label" for="product"><span class="slds-required slds-m-top_x-small">*</span>Product</label>
+                <lightning:inputField aura:id="product" fieldName="Product__c" variant="label-hidden" class="slds-m-top_x-small"/>
+            </div>
+
+            <lightning:layoutItem size="12" class="slds-hide">
+                <lightning:inputField aura:id="Application_Start_Date__c" fieldName="Application_Start_Date__c" variant="label-hidden" class="slds-m-top_x-small"/>
+            </lightning:layoutItem>
+
+
+            <div class="slds-m-top_x-small">
+                <label class="slds-form-element__label" for="numOfRooms">
+                <span class="slds-required">*</span>
+                Number of Rooms
+                    <c:ApplicationHelpText textToDisplay="{!$Label.c.Application_Number_of_Rooms_Help_Text}" wrapperCssClass="zindex5" />
+
+                </label>
+                <lightning:inputField fieldName="Number_of_Rooms__c" variant="label-hidden" aura:id="numOfRooms" min="0"/>
+                <span class="slds-hide slds-required" aura:id="errorMessage">Can't have a negative number</span>
+            </div>
+
+            <!-- DUAL BRAND SECTION -->
+            <lightning:inputField aura:id="isDualBrand" fieldName="Dual_Brand_Deal__c" class="slds-hide"/>
+
+            <aura:if isTrue="{!v.showDualBrand}">
+            <lightning:layoutItem size="12" flexibility="grow" class="slds-m-top_x-small">
+                <div class="slds-page-header slds-text-title_caps slds-m-top_x-large slds-p-around_small">Dual Brand Information</div>
+            </lightning:layoutItem>
+
+            <lightning:layoutItem size="12" flexibility="grow" class="slds-m-top_x-small">
+                <label class="slds-form-element__label" for="Dual_Brand__c"><span class="slds-required">*</span>Dual Brand</label>
+                <lightning:inputField fieldName="Dual_Brand__c" variant="label-hidden" aura:id="Dual_Brand__c"/>
+            </lightning:layoutItem>
+
+            <lightning:layoutItem size="12" flexibility="grow" class="slds-m-top_x-small">
+                <label class="slds-form-element__label" for="Dual_Product__c"><span class="slds-required">*</span>Dual Product</label>
+                <lightning:inputField fieldName="Dual_Product__c" variant="label-hidden" aura:id="Dual_Product__c"/>
+            </lightning:layoutItem>
+
+            <lightning:layoutItem size="12" flexibility="grow" class="slds-m-top_x-small">
+                <label class="slds-form-element__label" for="Dual_Brand_Number_of_Rooms__c"><span class="slds-required">*</span>Dual Brand Number of Rooms</label>
+                <lightning:inputField fieldName="Dual_Brand_Number_of_Rooms__c" variant="label-hidden" aura:id="Dual_Brand_Number_of_Rooms__c"/>
+            </lightning:layoutItem>
+            </aura:if>
+            <!--END DUAL BRAND SECTION -->
+
+            <!-- Hotel Address Info -->
+			<div class="slds-page-header slds-text-title_caps slds-m-top_x-large slds-p-around_small">Hotel Address</div>
+            
+			<lightning:layout multipleRows="true" horizontalAlign="spread" class="slds-m-top_x-small">
+
+                <lightning:layoutItem size="12">
+                        <label class="slds-form-element__label" for="street1">
+                        <span class="slds-required">*</span>
+                        Address Line 1
+                        
+
+                            <c:ApplicationHelpText textToDisplay="{!$Label.c.Application_Hotel_Address_Help_Text}" wrapperCssClass="zindex4" />
+
+                        </label>
+                        <lightning:inputField fieldName="Hotel_Address_Line_1__c" variant="label-hidden" aura:id="street1"/>
+                        <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="street2">Address Line 2</label>
+                    <lightning:inputField fieldName="Hotel_Address_Line_2__c" variant="label-hidden" aura:id="street2"/>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="6" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="city"><span class="slds-required">*</span>City</label>
+                    <lightning:inputField fieldName="Hotel_City__c" variant="label-hidden" aura:id="city"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>            
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="state"><span class="slds-required">*</span>State/Province</label>
+                    <aura:if isTrue="{!v.toggleInput}">
+                        <lightning:inputField fieldName="Hotel_State_Province__c" variant="label-hidden" aura:id="state1"/>
+                        <aura:set attribute="else">
+                            <lightning:inputField fieldName="Hotel_State_Province__c" variant="label-hidden" aura:id="state2"/>
+                        </aura:set>
+                    </aura:if>
+                    
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="country"><span class="slds-required">*</span>Country</label>
+                    <lightning:inputField fieldName="Hotel_Country__c" variant="label-hidden" aura:id="country" onchange="{!c.resetState}"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="zip"><span class="slds-required">*</span>Zip/Postal Code</label>
+                    <lightning:inputField fieldName="Hotel_Zip_Postal_Code__c" variant="label-hidden" aura:id="zip"/>
+                    <span class="slds-hide slds-required" aura:id="errorMessage">Field is required</span>
+                </lightning:layoutItem>
+
+        	</lightning:layout>
+
+            <div class="slds-align_absolute-center slds-m-top_large">
+                <lightning:button aura:id="prevButton" disabled="{!v.step == 1}" variant="brand" label="Previous" onclick="{!c.decrementStep}"/>
+                <aura:if isTrue="{!v.step != 7}">
+                    <lightning:button variant="brand" label="Next" type="submit"/>        
+                </aura:if>
+            </div>
+
+            </lightning:recordEditForm>
+            </form>
+        </lightning:layoutItem>
+
+        <lightning:layoutItem  padding="around-large" size="4">
+            <c:ApplicationFileDisplay appId="{!v.newApplication.Id}"
+                idToUploadTo ="{!v.idToPrivateFiles.Additional_Document__c.Id}"/>
+        </lightning:layoutItem>
+    </lightning:layout>
+    </div>
+</aura:component>

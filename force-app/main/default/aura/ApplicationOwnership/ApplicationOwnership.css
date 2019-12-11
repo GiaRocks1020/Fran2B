@@ -1,0 +1,36 @@
+.THIS lightning-combobox.slds-form-element lightning-helptext.slds-form-element{
+    display: inline;
+    margin-left: -.50rem;
+}
+
+.THIS lightning-helptext.slds-form-element{
+    display: inline;
+}
+
+.THIS .noCLick{
+	pointer-events:none!important;
+}
+
+
+.THIS .noHover:hover{
+	cursor: not-allowed;
+}
+
+.THIS .slds-checkbox_faux{
+	    background-color: rgb(233, 234, 236)!important;
+    border-color: rgb(196, 198, 202)!important;
+
+     width: 1rem;
+    height: 1rem;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    border: 1px solid rgb(212, 212, 212);
+    border-radius: .125rem;
+    background: rgb(255, 255, 255);
+    transition: border .1s linear,background-color .1s linear;
+}
+ .THIS .inline {
+    z-index: 99999999;
+    display:inline;
+}

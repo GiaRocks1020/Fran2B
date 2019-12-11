@@ -1,0 +1,74 @@
+.THIS lightning-combobox.slds-form-element lightning-helptext.slds-form-element{
+    display: inline;
+    margin-left: -.50rem;
+}
+
+.THIS lightning-combobox.slds-form-element label.slds-form-element__label::before{
+    content: "*";
+    color: rgb(194, 57, 52);
+    margin: 0 .125rem;
+}
+
+
+.THIS .noClick{
+	pointer-events:none!important;
+}
+
+
+.THIS .noHover:hover{
+	cursor: not-allowed;
+}
+
+.THIS .slds-checkbox_faux{
+	    background-color: rgb(233, 234, 236)!important;
+    border-color: rgb(196, 198, 202)!important;
+
+     width: 1rem;
+    height: 1rem;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    border: 1px solid rgb(212, 212, 212);
+    border-radius: .125rem;
+    background: rgb(255, 255, 255);
+    transition: border .1s linear,background-color .1s linear;
+}
+
+
+
+.THIS .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.THIS .tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.THIS .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+ .THIS .inline {
+    display:inline;
+}

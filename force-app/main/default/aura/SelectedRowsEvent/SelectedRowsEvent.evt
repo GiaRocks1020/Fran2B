@@ -1,0 +1,11 @@
+<!--
+ - @description Component Event for passing selected rows
+ -
+ - @author Zach French
+ - @date 2019-09-24
+ -->
+
+<aura:event type="COMPONENT"
+            description="pass all selected rows from child datatable to parent component, fired upon row selection change">
+    <aura:attribute name="selectedRows" type="List"/>
+</aura:event>

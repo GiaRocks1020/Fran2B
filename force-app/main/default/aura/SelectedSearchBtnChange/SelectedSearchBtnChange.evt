@@ -1,0 +1,10 @@
+<!--
+ - @description Used to specify when the search button was clicked.
+ -
+ - @author Zach French
+ - @date 2019-09-24
+ -->
+
+<aura:event type="COMPONENT"
+            description="let parent component know the search button was clicked, fired upon button click">
+</aura:event>

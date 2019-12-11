@@ -1,0 +1,43 @@
+<aura:component controller="PropertyCodeGeneratorController"  implements="flexipage:availableForAllPageTypes">
+	<aura:attribute name="recordId" type="String"/>
+	<aura:attribute name="property" type="Property__c" default="{'sobjectType' : 'Property__c'}"/>
+	<aura:attribute name="latestGeneratedCode" type="Object"/>
+	<aura:attribute name="propertyCodeMap" type="Map"/>
+	<aura:attribute name="displayedCode" type="String" default="" />
+	<aura:attribute name="errorMessage" type="String" default="" />
+	<aura:attribute name="manualChange" type="Boolean" default="False" />
+	<aura:attribute name="showSpinner" type="Boolean" default="True" />
+
+
+
+	<aura:handler name="init" value="{!this}" action="{!c.init}" />
+	<aura:handler name="change" value="{!v.displayedCode}" action="{!c.onDisplayCodeChange}" />
+
+	<aura:if isTrue="{!v.showSpinner}">
+		<lightning:spinner />
+	</aura:if>
+	<ui:message class="slds-hide" aura:id="errorMessage" severity="error" >
+			{!v.errorMessage}
+	</ui:message>
+
+	<div class="slds-grid slds-wrap slds-gutters slds-align_absolute-center">
+		<ui:outputText value="Property Code: " />
+		<ui:outputText class ="bold smallLeftPadding" value="{!v.latestGeneratedCode.State_Country_Code__c}" />
+
+		<div class="slds-size_6-of-12 smallLeftPadding ">
+			<ui:inputText aura:id="displayedCode" value="{!v.displayedCode}"  maxlength="3"/>
+		</div>
+
+		<div class="slds-col slds-p-around_small slds-size_12-of-12 slds-align_absolute-center">
+			<ui:button aura:id="generateCode" class="slds-button slds-button_brand" label="Next Code" 
+				press="{!c.generateCodeClick}"/>
+			<ui:button aura:id="acceptCode" class="slds-button slds-button_brand" label="Accept"
+				press="{!c.onAcceptClick}" />
+		</div>
+
+	</div>
+
+
+
+
+</aura:component>

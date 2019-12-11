@@ -1,0 +1,139 @@
+<aura:component implements="force:hasRecordId,flexipage:availableForAllPageTypes" access="global" controller="CreateChecklistCtrl">
+    <lightning:navigation aura:id="navService"/>
+    <aura:attribute name="checklistItems" type="Object[]"/>
+    <aura:attribute name="editMode" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/> 
+
+    <aura:attribute name="propertyId" type="String" /> 
+    <aura:if isTrue="{!v.editMode}"> 
+    <lightning:card  title="Checklist Items">
+        <aura:set attribute="actions">
+            <lightning:button label="Save" variant="brand" onclick="{!c.saveAndCancel}"/>
+            <lightning:button label="Cancel" onclick="{!c.toggleEdit}"/>
+        </aura:set>
+    </lightning:card>
+    <div class="slds-grid">
+        <div class="slds-col slds-size_4-of-4 slds-p-right_medium">
+        <div class="slds-box slds-theme_default">
+            <div class="slds-grid">
+                <lightning:accordion
+                    allowMultipleSectionsOpen="true"
+                    activeSectionName="{!'0.'+(v.checklistItems[0].checklistType)}">
+            <aura:iteration items="{!v.checklistItems}" var="option" indexVar="index">
+                    <div class="slds-col slds-size_1-of-1">
+                        <lightning:accordionSection name="{!(index)+'.'+(option.checklistType)}" label="{!(option.checklistType)+'  '+(option.categoryStatus)}">
+                                <aura:iteration items="{!option.checklistItems}" var="citems">                            
+                    <div class="slds-grid slds-wrap slds-border_bottom slds-p-top_medium">
+                            <div class="slds-size_1-of-2 slds-p-right_medium">
+                                <lightning:recordEditForm objectApiName="PIP_Checklist_Item__c">
+                                    <label class="slds-form-element__label" for="Notes">{!citems.pipCI.Question__c} ({!citems.pipCI.Number_of_Photos__c} photos minimum.)</label>
+                                    <lightning:inputField aura:id="Notes" fieldName="Notes__c" value="{!citems.pipCI.Notes__c}" variant="label-hidden"/>
+                                </lightning:recordEditForm>
+                            </div>
+                            <div class="slds-size_1-of-2 slds-p-right_medium">
+                                <lightning:recordEditForm objectApiName="PIP_Checklist_Item__c">
+                                <lightning:inputField fieldName="Measurement__c" value="{!citems.pipCI.Measurement__c}"/>
+                            </lightning:recordEditForm>
+                            </div>
+                            <div class="slds-size_1-of-2 slds-p-right_medium">
+                                    <lightning:recordEditForm objectApiName="PIP_Checklist_Item__c">
+
+                            <lightning:inputField fieldName="Improvement__c" value="{!citems.pipCI.Improvement__c}"/>
+                            </lightning:recordEditForm>
+                            </div>
+                            <div class="slds-size_1-of-2 slds-p-right_medium">
+                                    <lightning:recordEditForm objectApiName="PIP_Checklist_Item__c">
+
+                            <lightning:inputField fieldName="Acceptable__c" value="{!citems.pipCI.Acceptable__c}"/>
+                            </lightning:recordEditForm>
+                            </div>
+                            <div class="slds-size_1-of-2 slds-p-right_medium">
+                                    <lightning:recordEditForm objectApiName="PIP_Checklist_Item__c">
+
+                            <lightning:inputField fieldName="Type__c" value="{!citems.pipCI.Type__c}"/>
+                            </lightning:recordEditForm>
+                            </div>
+                    </div>
+                </aura:iteration>
+                        </lightning:accordionSection>
+                    </div>
+            </aura:iteration>
+                    </lightning:accordion>
+            </div>
+
+        </div>
+    </div>
+
+    </div>
+    </aura:if>
+    <aura:if isTrue="{!!v.editMode}">
+            <lightning:card  title="Checklist Items">
+                <aura:set attribute="actions">
+                    <lightning:button label="Edit" variant="brand" onclick="{!c.toggleEdit}"/>
+                </aura:set>
+            </lightning:card>
+            <div class="slds-grid">
+                    <div class="slds-col slds-size_4-of-4 slds-p-right_medium">
+                    <div class="slds-box slds-theme_default">
+                            <div class="slds-grid">
+                        <lightning:accordion
+                            allowMultipleSectionsOpen="true">
+                        <aura:iteration items="{!v.checklistItems}" var="option">
+                                <div class="slds-col slds-size_1-of-1">
+                                    <lightning:accordionSection name="{!option.checklistType}" label="{!(option.checklistType)+'  '+(option.categoryStatus)}">
+                                            <aura:iteration items="{!option.checklistItems}" var="citems">                            
+                                <div class="slds-grid slds-wrap slds-border_bottom slds-p-bottom_medium">
+
+                                        <div class="slds-size_1-of-2 slds-p-right_medium">
+                                            <div class="slds-form-element slds-form-element_readonly">
+                                                <span class="slds-form-element__label">{!citems.pipCI.Question__c} ({!citems.pipCI.Number_of_Photos__c} photos minimum.)</span>
+                                                <div class="slds-form-element__control">
+                                                    <div class="slds-form-element__static">{!citems.pipCI.Notes__c}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-size_1-of-2 slds-p-right_medium">
+                                            <div class="slds-form-element slds-form-element_readonly">
+                                                    <span class="slds-form-element__label">Measurement Needed</span>
+                                                    <div class="slds-form-element__control">
+                                                        <div class="slds-form-element__static">{!citems.pipCI.Measurement__c}</div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-size_1-of-2 slds-p-right_medium">
+                                            <div class="slds-form-element slds-form-element_readonly">
+                                                    <span class="slds-form-element__label">Improvement</span>
+                                                    <div class="slds-form-element__control">
+                                                        <div class="slds-form-element__static">{!citems.pipCI.Improvement__c}</div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-size_1-of-2 slds-p-right_medium">
+                                            <div class="slds-form-element slds-form-element_readonly">
+                                                    <span class="slds-form-element__label">Acceptable</span>
+                                                    <div class="slds-form-element__control">
+                                                        <div class="slds-form-element__static">{!citems.pipCI.Acceptable__c}</div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-size_1-of-2 slds-p-right_medium">
+                                            <div class="slds-form-element slds-form-element_readonly">
+                                                <span class="slds-form-element__label">Type</span>
+                                                <div class="slds-form-element__control">
+                                                    <div class="slds-form-element__static">{!citems.pipCI.Type__c}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                            </aura:iteration>
+                                    </lightning:accordionSection>
+                                </div>
+                        </aura:iteration>
+                        </lightning:accordion>                
+                        </div>
+                    </div>
+                </div>
+            
+                </div>
+    </aura:if>
+</aura:component>

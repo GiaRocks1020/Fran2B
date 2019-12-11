@@ -1,0 +1,63 @@
+<aura:component controller="LeadConvertNavButtonsController">
+    <aura:attribute name="screen" type="Integer"/>
+    <aura:attribute name="lead" type="Lead"/>
+    <aura:attribute name="contact" type="Contact"/>
+    <aura:attribute name="account" type="Account"/>
+    <aura:attribute name="property" type="Property__c"/>
+    <aura:attribute name="createDeal" type="boolean"/>
+    <aura:attribute name="errorList" type="list"/>
+    
+    <div role="dialog" tabindex="-1" aria-labelledby="modal-header-01" aura:id="Modalbox" class="slds-modal">
+        <div class="slds-modal__container" id="standardSearchContainer">
+            <div class="slds-modal__content slds-p-around--medium">
+                 <!-- Displayed if the user tries to navigate back-->
+                <aura:if isTrue="{!empty(v.errorList)}">
+                    <div class="slds-text-heading--small slds-align_absolute-center">
+                           {!$Label.c.Lead_Convert_Navigation_Cancel_Confirmation}
+                    </div>                
+                    <lightning:layoutItem padding="around-small" size="10" class="slds-align_absolute-center">
+                        <div>
+                            <lightning:button name="decline" variant="brand" label="No" onclick="{!c.closeModal}"/>
+                            <lightning:button name="confirm" variant="brand" label="Yes" onclick="{!c.redirect}" class="button-margin"/>
+                        </div>
+                    </lightning:layoutItem>
+                </aura:if>
+                <!-- Displayed if there are errors during Lead Conversion-->
+                <aura:if isTrue="{!v.errorList.length > 1}">
+                    <div class="slds-text-heading--small slds-align_absolute-center">
+                           {!$Label.c.Lead_Convert_Error_Title}
+                    </div>
+                    <br/>
+                    <aura:iteration items="{!v.errorList}" var="e">
+                        <div>
+                            {!e}
+                        </div>
+                    </aura:iteration>                
+                     <lightning:layoutItem padding="around-small" size="10" class="slds-align_absolute-center">
+                        <div>
+                            <lightning:button name="return" variant="brand" label="Return to Lead" onclick="{!c.redirect}" class="button-margin"/>
+                        </div>
+                    </lightning:layoutItem>
+                </aura:if>
+            </div>
+        </div>
+    </div>
+    <div class="slds-backdrop" aura:id="Modalbackdrop"></div>
+        <lightning:layoutItem padding="around-small" size="10" class="slds-align_absolute-center">
+    	<div class="navButton margin-b">
+            <lightning:button variant="brand" label="Cancel" onclick="{!c.handleShowModal}" class="button-margin"/>
+       	<aura:if isTrue="{!v.screen != 1}">
+    		<lightning:button variant="brand" label="Previous" onclick="{!c.goToPreviousScreen}" class="button-margin"/>
+		</aura:if>
+        <aura:if isTrue="{!v.screen != 3}">
+        	<lightning:button variant="brand" label="Next" onclick="{!c.goToNextScreen}" class="button-margin"/>
+        </aura:if>   
+        <aura:if isTrue="{!v.screen == 2}">
+            <lightning:button variant="brand" label="Convert Lead" onclick="{!c.convertLead}" class="button-margin"/>
+        </aura:if>
+        <aura:if isTrue="{!v.screen == 3}">
+            <lightning:button variant="brand" label="Convert Lead" onclick="{!c.convertLead}" class="button-margin"/>
+        </aura:if>
+    	</div>
+    	</lightning:layoutItem>
+</aura:component>

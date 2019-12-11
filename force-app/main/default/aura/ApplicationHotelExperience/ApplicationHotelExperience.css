@@ -1,0 +1,23 @@
+.THIS .experience-heading{
+    margin-top: .5rem;
+    background-color:transparent;
+}
+
+.THIS lightning-helptext.slds-form-element{
+    display: inline;
+}
+
+.THIS lightning-textarea label.slds-form-element__label{
+    display: none;
+}
+
+.THIS.italic{
+    font-style: italic;
+}
+.THIS .italic{
+    font-style: italic;
+}
+
+ .THIS .inline {
+    display:inline;
+}

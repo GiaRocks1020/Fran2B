@@ -1,0 +1,304 @@
+<aura:component>
+    <aura:attribute name="newApplication" type="Application__c" default="{'sobjectType' : 'Application__c'}"/>
+    <aura:attribute name="step" type="Integer"/>
+    <aura:attribute name="showSpinner" type="Boolean" default="true" />
+    <aura:attribute name="idToPrivateFiles" type="Map"/>
+ 
+    <div class="slds-card-wrapper">
+    <div class="slds-page-header__detail slds-grid slds-text-heading--medium">
+		<h2>Franchising &amp; Hotel Experience</h2>
+    </div>
+    <hr class="slds-m-top_small"/>
+        <aura:if isTrue="{!v.showSpinner}">
+            <lightning:spinner />
+        </aura:if>
+        
+	<lightning:layout class="">
+        <lightning:layoutItem padding="around-large" size="8">
+            <form class="slds-form--stacked">
+
+			<lightning:recordEditForm aura:id="editForm" recordId="{!v.newApplication.Id}" 
+                                      objectApiName="Application__c" onload="{!c.onload}" onsuccess="{!c.incrementStep}"
+                                      onerror="{!c.onError}">
+                <lightning:messages/>
+
+                <lightning:inputField fieldName="Section__c" variant="label-hidden" aura:id="section" class="slds-hide"/>
+
+                    <div class="slds-m-left_small">
+                	 <p class="slds-m-bottom_x-large "><b>Please enter any hotel/non-hotel experience you have. 
+                    	If you do not have any experience, enter the number 0 in the fields provided.</b></p>
+                    </div>
+
+                <lightning:layoutItem size="12">
+                    <div class="slds-page-header slds-text-title_caps slds-p-around_small">
+                                     Hotel Ownership Experience Details (past 5 years)</div>                
+                </lightning:layoutItem>
+
+                <lightning:layout multipleRows="true" horizontalAlign="spread" class="slds-m-top_x-small">
+                
+                <lightning:layoutItem size="4" class="slds-page-header slds-text-title_caps experience-heading">
+                	<h3>Upscale:</h3>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small">
+                    <label class="slds-form-element__label" for="Upscale_Years_of_Experience__c">Years of Experience</label>
+                	<lightning:inputField fieldName="Upscale_Years_of_Experience__c" 
+                                          aura:id="Upscale_Years_of_Experience__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small">
+                    <label class="slds-form-element__label" for="Upscale_of_Hotels_Owned__c">Number of Hotels Owned</label>
+                	<lightning:inputField fieldName="Upscale_of_Hotels_Owned__c" 
+                                          aura:id="Upscale_of_Hotels_Owned__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-page-header slds-text-title_caps experience-heading">
+                	<h3>Upper Midscale:</h3>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Upper_Midscale_Years_of_Experience__c">Years of Experience</label>
+                	<lightning:inputField fieldName="Upper_Midscale_Years_of_Experience__c" 
+                                          aura:id="Upper_Midscale_Years_of_Experience__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Upper_Midscale_of_Hotels_Owned__c">Number of Hotels Owned</label>
+                	<lightning:inputField fieldName="Upper_Midscale_of_Hotels_Owned__c" 
+                                          aura:id="Upper_Midscale_of_Hotels_Owned__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-page-header slds-text-title_caps experience-heading">
+                	<h3>Midscale:</h3>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Midscale_Years_of_Experience__c">Years of Experience</label>
+                	<lightning:inputField fieldName="Midscale_Years_of_Experience__c" 
+                                          aura:id="Midscale_Years_of_Experience__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Midscale_of_Hotels_Owned__c">Number of Hotels Owned</label>
+                	<lightning:inputField fieldName="Midscale_of_Hotels_Owned__c" 
+                                          aura:id="Midscale_of_Hotels_Owned__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-page-header slds-text-title_caps experience-heading">
+                	<h3>Economy:</h3>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Economy_Years_of_Experience__c">Years of Experience</label>
+                	<lightning:inputField fieldName="Economy_Years_of_Experience__c" 
+                                          aura:id="Economy_Years_of_Experience__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Economy_of_Hotels_Owned__c">Number of Hotels Owned</label>
+                	<lightning:inputField fieldName="Economy_of_Hotels_Owned__c" 
+                                          aura:id="Economy_of_Hotels_Owned__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-page-header slds-text-title_caps experience-heading">
+                	<h3>Choice Properties Owned:</h3>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="8" class="slds-p-left_x-small slds-m-top_x-small">
+                	<lightning:inputField fieldName="Choice_Owned_Property_Codes__c" 
+                                          aura:id="Choice_Owned_Property_Codes__c"/>
+                </lightning:layoutItem>
+                    
+				<!-- Non-Hotel Ownership Section -->
+                <lightning:layoutItem size="12">
+                    <div class="slds-page-header slds-text-title_caps slds-p-around_small slds-m-top_large">
+                                     Non-Hotel Ownership Experience</div>                
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-page-header slds-text-title_caps experience-heading">
+                	<h3>Franchised Restaurant Experience:</h3>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Franchise_Restaurant_Years_of_Experience__c">Years of Experience</label>
+                	<lightning:inputField fieldName="Franchise_Restaurant_Years_of_Experience__c" 
+                                          aura:id="Franchise_Restaurant_Years_of_Experience__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Franchise_Restaurant_of_Stores_Owned__c">Number of Stores Owned</label>
+                	<lightning:inputField fieldName="Franchise_Restaurant_of_Stores_Owned__c" 
+                                          aura:id="Franchise_Restaurant_of_Stores_Owned__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-page-header slds-text-title_caps experience-heading">
+                	<h3>Non-Franchised Restaurant Experience:</h3>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Non_Fran_Restaurant_Years_of_Experience__c">Years of Experience</label>
+                	<lightning:inputField fieldName="Non_Fran_Restaurant_Years_of_Experience__c" 
+                                          aura:id="Non_Fran_Restaurant_Years_of_Experience__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Non_Fran_Restaurant_of_Stores_Owned__c">Number of Stores Owned</label>
+                	<lightning:inputField fieldName="Non_Fran_Restaurant_of_Stores_Owned__c" 
+                                          aura:id="Non_Fran_Restaurant_of_Stores_Owned__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-page-header slds-text-title_caps experience-heading">
+                	<h3>Leasing Experience:</h3>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Leasing_Years_of_Experience__c">Years of Experience</label>
+                	<lightning:inputField fieldName="Leasing_Years_of_Experience__c" 
+                                          aura:id="Leasing_Years_of_Experience__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Leasing_of_Stores_Owned__c">Number of Stores Owned</label>
+                	<lightning:inputField fieldName="Leasing_of_Stores_Owned__c" 
+                                          aura:id="Leasing_of_Stores_Owned__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-page-header slds-text-title_caps experience-heading">
+                	<h3>Franchised Retail Experience:</h3>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Franchised_Retail_Years_of_Experience__c">Years of Experience</label>
+                	<lightning:inputField fieldName="Franchised_Retail_Years_of_Experience__c" 
+                                          aura:id="Franchised_Retail_Years_of_Experience__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Franchised_Retail_of_Stores_Owned__c">Number of Stores Owned</label>
+                	<lightning:inputField fieldName="Franchised_Retail_of_Stores_Owned__c" 
+                                          aura:id="Franchised_Retail_of_Stores_Owned__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-page-header slds-text-title_caps experience-heading">
+                	<h3>Non-Franchised Retail Experience:</h3>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Non_Franchise_Retail_Years_of_Experience__c">Years of Experience</label>
+                	<lightning:inputField fieldName="Non_Franchise_Retail_Years_of_Experience__c" 
+                                          aura:id="Non_Franchise_Retail_Years_of_Experience__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="4" class="slds-p-left_x-small slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Non_Franchise_Retail_of_Stores_Owned__c">Number of Stores Owned</label>
+                	<lightning:inputField fieldName="Non_Franchise_Retail_of_Stores_Owned__c" 
+                                          aura:id="Non_Franchise_Retail_of_Stores_Owned__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <!-- Background Information -->
+                <lightning:layoutItem size="12">
+                    <div class="slds-page-header slds-text-title_caps slds-p-around_small slds-m-top_large">
+                      <ui:outputText value="Background Information"/>
+                    </div>                
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="12">
+                    <div class="slds-p-around_small slds-m-small">
+                      <ui:outputText value="For purposes of this section, “Applicant” includes anyone owning a direct or indirect interest in the hotel." class="italic"/>
+                    </div>                
+                </lightning:layoutItem>
+
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Applicant_defendant_in_any_lawsuit__c">
+                        <span class="slds-required">*</span>
+                        Is any Applicant now, or has any Applicant ever been a defendant in any lawsuit?
+                    </label>
+                  <lightning:inputField fieldName="Applicant_defendant_in_any_lawsuit__c" 
+                                          aura:id="Applicant_defendant_in_any_lawsuit__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Applicant_ever_filed_for_bankruptcy__c">
+                        <span class="slds-required">*</span>
+                        Has any Applicant ever filed for bankruptcy?
+                    </label>
+                  <lightning:inputField fieldName="Applicant_ever_filed_for_bankruptcy__c" 
+                                          aura:id="Applicant_ever_filed_for_bankruptcy__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+
+
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Applicant_convicted_of_a_crime__c">
+                        <span class="slds-required">*</span>
+                        Has any Applicant ever been convicted of a crime other than minor traffic violations?
+                    </label>
+                  <lightning:inputField fieldName="Applicant_convicted_of_a_crime__c" 
+                                          aura:id="Applicant_convicted_of_a_crime__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Designated_National_or_Blocked_Person__c">
+                        <span class="slds-required">*</span>
+                        Is any Applicant a “Specially Designated National” or a “Blocked Person”?
+
+
+
+
+                        <c:ApplicationHelpText textToDisplay="{!$Label.c.Application_Designated_National_Help_Text}" />
+                    </label>
+                	<lightning:inputField fieldName="Designated_National_or_Blocked_Person__c" 
+                                          aura:id="Designated_National_or_Blocked_Person__c"
+                                          variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <label class="slds-form-element__label" for="Person_Court_CaseNumber_Outcome__c">
+                        If “Yes” has been indicated for any of the four questions above, please identify the person, court, case number
+ 						and outcome below.
+                    </label>
+                	<lightning:inputField fieldName="Person_Court_CaseNumber_Outcome__c" 
+                                          aura:id="Person_Court_CaseNumber_Outcome__c" variant="label-hidden"/>
+                </lightning:layoutItem>
+                    
+                <div class="slds-align_absolute-center slds-m-top_large">
+                <lightning:button aura:id="prevButton" disabled="{!v.step == 1}" variant="brand" label="Previous" onclick="{!c.decrementStep}"/>
+                <aura:if isTrue="{!v.step != 7}">
+                    <lightning:button variant="brand"  type="submit" label="Next"/>        
+                </aura:if>
+            	</div>
+                    
+                </lightning:layout>
+                </lightning:recordEditForm>
+          
+            </form>
+        </lightning:layoutItem>
+
+        <lightning:layoutItem  padding="around-small" size="4">
+            <c:ApplicationFileDisplay appId="{!v.newApplication.Id}"
+                idToUploadTo ="{!v.idToPrivateFiles.Additional_Document__c.Id}"/>
+        </lightning:layoutItem>
+    </lightning:layout>
+    </div>
+</aura:component>

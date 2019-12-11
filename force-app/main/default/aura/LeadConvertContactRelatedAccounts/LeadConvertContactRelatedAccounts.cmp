@@ -1,0 +1,61 @@
+<aura:component controller="LeadConvertAccountListController">
+	<aura:attribute name="accounts" type="Account"/>
+    <aura:attribute name="accountList" type="List"/>
+    <aura:attribute name="accountColumns" type="List"/>
+    <aura:attribute name="contact" type="Contact"/>
+    <aura:attribute name="showRadio" type="Boolean" default="true"/>
+    
+    <aura:attribute name="isNewAccount" type="Boolean" />
+    <aura:attribute name="screen" type="Integer"/>
+    <aura:attribute name="selectedId" type="String"/>
+    <aura:attribute name="selectedAccount" type="Account"/>
+    <aura:attribute name="dataLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="title" type="String" default=""/>
+    
+    <aura:handler name="change" value="{!v.contact}" action="{!c.init}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+          <header>
+            <h2 class="slds-text-heading_medium">{!v.title}</h2>
+            <h3 class="reminder">{!$Label.c.Lead_Convert_Reminder_Text_Step_2}</h3>
+           </header> <br/>
+        <article class="slds-card slds-card_boundary half-heigth">
+        <aura:if isTrue="{!!v.dataLoaded}">
+        	<lightning:spinner variant="brand" size="large" alternativeText="Fetching data"/>
+        </aura:if>
+        <div class="slds-card__header slds-grid slds-text-heading--small">
+            <h2>
+                <lightning:icon iconName="standard:account" size="small" class="slds-media__figure"/>
+                {!$Label.c.Lead_Convert_Account_Title_1}
+            </h2>
+        </div>
+		<table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        <!-- column for radio -->
+                        <aura:if isTrue="{!v.showRadio}">
+                            <th scope="col"/>
+                        </aura:if>
+                    	<aura:iteration items="{!v.accountColumns}" var="ac">
+                        	<th scope="col">
+                                <div class="slds-truncate" title="{!ac.label}">{!ac.label}</div>
+                            </th>
+                    	</aura:iteration>
+                    </tr>
+                </thead>
+                <tbody>
+                	<aura:iteration items="{!v.accounts}" var="a">
+                        <c:AccountRow account="{!a}" apiNames="{!v.accountColumns}" showRadio="{!v.showRadio}" 
+                                      selectedId="{!v.selectedId}" selectedAccount="{!v.selectedAccount}" type="c"/>
+                    </aura:iteration>
+                </tbody>            
+            </table>            
+            <aura:if isTrue="{!empty(v.accounts)}">
+                <div class="slds-card__header slds-grid slds-text-heading--small border-half">
+                	{!$Label.c.Lead_Convert_No_Contact_Accounts_Found}
+                    <br/><br/><br/>
+            	</div>
+            </aura:if>
+
+       </article>
+  
+</aura:component>

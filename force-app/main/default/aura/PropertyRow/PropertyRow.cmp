@@ -1,0 +1,35 @@
+<aura:component >
+<aura:attribute name="property" Type="property__c" default="{'sobjectType': 'Property__c'}"/>
+    <aura:attribute name="selectedId" type="String" />
+    <aura:attribute name="displayData" Type="List"/>
+    <aura:attribute name="isSelected" Type="Boolean" default="false" />
+    <aura:attribute name="selectedProperty" type="Object" />
+    <aura:attribute name="lead" type="Object" />
+    <aura:attribute name="percent" type="Integer"/>
+    <aura:attribute name="apiNames" type="List"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:handler name="change" value="{!v.selectedId}" action="{!c.checkSelection}"/>
+    
+    <div class="slds-backdrop " aura:id="Modalbackdrop"></div>
+    <tr>
+        <th class="radio-s-width">
+	 		<label class="slds-radio">   
+                <ui:inputRadio aura:id="{!v.property.Id}" change="{!c.isClicked}" value="{!v.isSelected}"/>
+                <span class="slds-radio--faux"></span>
+                <span class="slds-assistive-text">Select Row</span>
+   			</label>
+        </th>
+        
+        <aura:iteration items="{!v.displayData}" var="dd">
+            <th>
+                <lightning:recordViewForm recordId="{!v.property.Id}" objectApiName="Property__c">
+                    <lightning:outputField fieldName="{!dd}" variant="label-hidden"/>
+                </lightning:recordViewForm>
+            </th>
+        </aura:iteration>
+        <th>
+            {!v.percent}%
+        </th>                   
+	</tr>	
+</aura:component>

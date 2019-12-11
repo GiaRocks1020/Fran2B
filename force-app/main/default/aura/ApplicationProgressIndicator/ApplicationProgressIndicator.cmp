@@ -1,0 +1,18 @@
+<aura:component>
+    <aura:attribute name="currentStep" type="Integer"/>
+    <aura:handler name="change" value="{!v.currentStep}" action="{!c.updateStep}"/>
+    <aura:attribute name="step" type="String"/>
+
+    <ltng:require scripts="{!$Resource.jQuery}" afterScriptsLoaded="{!c.init}" />
+    <div class="slds-m-top_large slds-size_12-of-12 ">
+        <lightning:progressIndicator type="path" currentStep="{!v.step}" class ="unclickable" variant="shaded">
+            <lightning:progressStep label="Hotel Information" value="1" class="unclickable" />
+            <lightning:progressStep label="Representative" value="2" class="unclickable"/>
+            <lightning:progressStep label="Entity" value="3" class="unclickable"/>
+            <lightning:progressStep label="Ownership" value="4" class="unclickable"/>
+            <lightning:progressStep label="Experience" value="5" class="unclickable"/>
+            <lightning:progressStep label="Site Control" value="6" class="unclickable"/>
+            <lightning:progressStep label="Other Information" value="7" class="unclickable"/>
+        </lightning:progressIndicator>
+    </div>
+</aura:component>

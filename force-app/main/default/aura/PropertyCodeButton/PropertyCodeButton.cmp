@@ -1,0 +1,35 @@
+<aura:component controller="PropertyCodeButtonController" implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction">
+	<aura:attribute name="toShow" type="Boolean" default="False"/>
+	<aura:attribute name="isVisible" type="Boolean" default="False"/>
+	<aura:handler event="c:ApplicationCloseModal" action="{!c.handleCloseModal}"/>
+	<aura:handler name="init" value="{!this}" action="{!c.init}"/>
+
+
+	<aura:if isTrue="{!v.toShow}">
+		<ui:button aura:id="generateCode" class="slds-button slds-button_brand" label="Generate Property Code" 
+		press="{!c.onGenerateClick}"/>
+	</aura:if>
+
+
+
+<div class="demo-only slds-hide" aura:id="Modalbox">
+  <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_small" style="z-index:10001">
+    <div class="slds-modal__container" >
+      <header class="slds-modal__header">
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Generate Property Code</h2>
+      </header>
+      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" aura:id="modalContent">
+      	<aura:if isTrue ="{!v.isVisible}">
+      		<c:PropertyCodeGenerator recordId="{!v.recordId}"/>
+      	</aura:if>
+      </div>
+      <footer class="slds-modal__footer">
+        <div class="slds-align_absolute-center slds-m-top_xsmall">
+            <lightning:button  name="modal" label="Cancel" type="button" variant="brand"  onclick="{!c.onCancelClick}"/>
+        </div>
+      </footer>
+    </div>
+  </section>
+  <div class="slds-backdrop slds-backdrop_open"></div>
+</div>
+</aura:component>

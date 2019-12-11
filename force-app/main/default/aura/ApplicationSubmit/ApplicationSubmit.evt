@@ -1,0 +1,1 @@
+<aura:event type="APPLICATION" description="Alerts the submission component that the user wants to submit the form" />

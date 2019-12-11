@@ -1,0 +1,266 @@
+<aura:component controller="ApplicationSiteControlController">
+    <aura:attribute name="newApplication" type="Application__c" default="{'sobjectType' : 'Application__c'}"/>
+    <aura:attribute name="step" type="Integer"/>
+    <aura:attribute name="showSpinner" type="Boolean" default="true" />
+    <aura:attribute name="isReceivership" type="Boolean"/>
+    
+    <aura:attribute name="propOwned" type="String"/>
+    <aura:attribute name="propOwnedByLender" type="String"/>
+    <aura:attribute name="showPropPurchased" type="Boolean"  default="true"/>
+    <aura:attribute name="propWillBeLeased" type="String"/>
+    <aura:attribute name="idToPrivateFiles" type="Map"/>
+    
+    <aura:handler event="c:ApplicationFileDeleted" action="{!c.handleFileDeletion}"/>
+    <aura:handler event="c:ApplicationUpload" action="{!c.handleFileUpload}"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+ 
+    <div class="slds-card-wrapper">
+    <div class="slds-page-header__detail slds-grid slds-text-heading--medium">
+		<h2>Site Control Information</h2>
+    </div>
+    <hr class="slds-m-top_small"/>
+		<aura:if isTrue="{!v.showSpinner}">
+            <lightning:spinner />
+        </aura:if>
+	<lightning:layout class="">
+        <lightning:layoutItem padding="around-large" size="8">
+            <form class="slds-form--stacked">
+
+                <lightning:recordEditForm aura:id="editForm" recordId="{!v.newApplication.Id}" objectApiName="Application__c" onload="{!c.removeSpinner}" 
+                                          onsubmit="{!c.setSection}" onsuccess="{!c.incrementStep}"  onerror="{!c.onError}">
+                <lightning:messages />
+
+            <div class="slds-page-header slds-text-title_caps slds-p-around_small">
+                 Site Control Information</div>    
+           
+             <div class="slds-m-top_x-small">
+                <label class="slds-form-element__label" for="Do_you_own_the_property__c">
+                    <span class="slds-required slds-m-top_x-small">*</span>
+                    Do you own the property?
+                 </label>
+                <lightning:inputField aura:id="Do_you_own_the_property__c" fieldName="Do_you_own_the_property__c" 
+                                      variant="label-hidden" onchange="{!c.handleRendering}"/>
+            </div>
+                <lightning:inputField fieldName="Section__c" variant="label-hidden" aura:id="section" class="slds-hide"/> 
+             <!-- Own Property Section --> 
+            <lightning:layout multipleRows="true" horizontalAlign="spread">
+                
+                <lightning:layout multipleRows="true" horizontalAlign="spread" aura:id="propOwned" class="max-width">
+                    <lightning:layoutItem size="6" class="slds-m-top_x-small">
+                        <label class="slds-form-element__label" for="Date_of_Ownership__c">
+                        <span class="slds-required slds-m-top_x-small">*</span>
+                        Date of Ownership
+                     	</label>
+                    	<lightning:inputField aura:id="Date_of_Ownership__c" fieldName="Date_of_Ownership__c" 
+                                              variant="label-hidden" value="{!v.newApplication.Date_of_Ownership__c}"/>
+                	</lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-m-top_x-small slds-p-left_x-small">        
+                  <c:ApplicationFileUpload parentId="{!v.idToPrivateFiles.Deed__c.Id}" section="Deed__c" label="Upload Deed"/>
+                </lightning:layoutItem>
+
+
+                <lightning:layoutItem size="12" flexibility="grow"  class="slds-m-top_x-small noHover">
+                    <label class="slds-form-element__label" for="Upload_Deed__c">Deed  Uploaded?</label>
+                    <lightning:inputField class="noCLick" fieldName="Upload_Deed__c" aura:id="Deed__c" 
+                                          variant="label-hidden" value="{!v.newApplication.Upload_Deed__c}"/>
+                </lightning:layoutItem>
+                    
+             	<lightning:layoutItem size="12" class="slds-m-top_x-small">
+                	<label class="slds-form-element__label" for="Property_currently_owned_by_a_lender__c">
+                        <span class="slds-required slds-m-top_x-small">*</span>
+                        Is this a bank owned deal?
+                    </label>
+                    <lightning:inputField aura:id="Property_currently_owned_by_a_lender__c" fieldName="Property_currently_owned_by_a_lender__c" 
+                                          variant="label-hidden" onchange="{!c.handleRendering}"/>
+             	</lightning:layoutItem>
+                    
+                    <lightning:layout multipleRows="true" horizontalAlign="spread" aura:id="bankOwned" class="max-width">
+                    <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                         <label class="slds-form-element__label" for="Lender_Name__c">
+                            Lender Name
+                        </label>
+                         <lightning:inputField aura:id="Lender_Name__c" fieldName="Lender_Name__c" variant="label-hidden" 
+                                               value="{!v.newApplication.Lender_Name__c}"/>
+                     </lightning:layoutItem>
+                        
+                     <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                         <label class="slds-form-element__label" for="Property_currently_owned_by_a_lender__c">
+                            Lender Phone
+                         </label>
+                         <lightning:inputField aura:id="Lender_Phone__c" fieldName="Lender_Phone__c" variant="label-hidden" 
+                                               value="{!v.newApplication.Lender_Phone__c}"/>
+                     </lightning:layoutItem>
+                     </lightning:layout>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true" horizontalAlign="spread" aura:id="propNotOwned" class="max-width">
+             	<lightning:layoutItem size="12" class="slds-m-top_x-small">
+
+                 	<label class="slds-form-element__label" for="Are_you_purchasing_the_property__c">
+                        <span class="slds-required slds-m-top_x-small">*</span>
+                        Are you purchasing the property?
+                     </label>
+                    <!--#######################################################################-->
+                    <aura:if isTrue="{!v.showPropPurchased}">
+                     <lightning:inputField aura:id="Are_you_purchasing_the_property__c" fieldName="Are_you_purchasing_the_property__c" 
+                                           variant="label-hidden" onchange="{!c.handleRendering}"/>
+                    </aura:if>
+             	</lightning:layoutItem>
+                    
+                <lightning:layout multipleRows="true" horizontalAlign="spread" aura:id="propWillBePurchased" class="max-width">    
+                <lightning:layoutItem size="6" class="slds-m-top_x-small">
+                     <label class="slds-form-element__label" for="What_is_the_expected_closing_date__c">
+                        What is the expected closing date?
+                     </label>
+                     <lightning:inputField aura:id="What_is_the_expected_closing_date__c" fieldName="What_is_the_expected_closing_date__c" 
+                                           variant="label-hidden" value="{!v.newApplication.What_is_the_expected_closing_date__c}"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-m-top_x-small slds-p-left_x-small">
+                   <c:ApplicationFileUpload parentId="{!v.idToPrivateFiles.PA_or_LOI__c.Id}" section="PA_or_LOI__c" label="Upload Purchase Agreement or Letter of Intent"/>
+                
+                </lightning:layoutItem>
+
+                 <lightning:layoutItem size="6" flexibility="grow" class=" slds-m-top_x-small noHover">
+                        <label class="slds-form-element__label" for="PA_or_LOI__c">
+                            <aura:if  isTrue="{!v.newApplication.Application_Type__c == 'Relicensing' }">
+                                 <span class="slds-required">*</span>
+                            </aura:if>
+                           
+                            PA or LOI Uploaded?</label>
+                        <lightning:inputField class = "noCLick" fieldName="PA_or_LOI__c" aura:id="PA_or_LOI__c" 
+                                              variant="label-hidden" value="{!v.newApplication.PA_or_LOI__c}"/>
+                    </lightning:layoutItem> 
+
+                </lightning:layout>
+                
+                <!-- Lease Property Section -->
+                <lightning:layout multipleRows="true" horizontalAlign="spread" aura:id="propWillNotBePurchased" class="max-width">
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                     <label class="slds-form-element__label" for="Will_you_be_leasing_the_property__c">
+                        <span class="slds-required slds-m-top_x-small">*</span>
+                        Will you be leasing the property?
+                     </label>
+                     <lightning:inputField aura:id="Will_you_be_leasing_the_property__c" fieldName="Will_you_be_leasing_the_property__c" 
+                                           variant="label-hidden" onchange="{!c.handleRendering}"/>
+                </lightning:layoutItem> 
+                    <lightning:layout multipleRows="true" horizontalAlign="spread" aura:id="propWillBeLeased"> 
+                    <lightning:layoutItem size="12" class="slds-m-top_x-small">  
+
+                      <c:ApplicationFileUpload parentId="{!v.idToPrivateFiles.Lease_Agreement__c.Id}" section="Lease_Agreement__c" label="Upload Lease Agreement"/>
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem size="6" flexibility="grow"  class="slds-m-top_x-small noHover">
+                        <label class="slds-form-element__label" for="Lease_Agreement__c">Lease  Uploaded?</label>
+                        <lightning:inputField class="noCLick" fieldName="Lease_Agreement__c" aura:id="Lease_Agreement__c" variant="label-hidden" value="{!v.newApplication.Lease_Agreement__c}"/>
+                    </lightning:layoutItem>
+                    </lightning:layout>
+
+                <lightning:layout multipleRows="true" horizontalAlign="spread" aura:id="propWillNotBeLeased" class="max-width"> 
+				<lightning:layoutItem size="12" class="slds-m-top_x-small"> 
+                    <label class="slds-form-element__label" for="Please_Explain__c">
+                        <span class="slds-required slds-m-top_x-small">*</span>
+                        Please explain
+                    </label>
+                    <lightning:inputField aura:id="Please_Explain__c" fieldName="Please_Explain__c" 
+                                          variant="label-hidden" value="{!v.newApplication.Please_Explain__c}"/>
+                </lightning:layoutItem>
+                </lightning:layout>
+                </lightning:layout>
+                    
+                </lightning:layout>
+
+                <!-- RECEIVERSHIP SECTION -->
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                <div class="slds-page-header slds-text-title_caps slds-p-around_small  slds-m-top_large">
+                Receivership</div>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="12" class="slds-m-top_x-small"> 
+                    <label class="slds-form-element__label" for="Is_this_hotel_in_Receivership__c">
+                    <span class="slds-required">*</span>
+                    Is this hotel in Receivership?
+                    </label>
+                    <lightning:inputField aura:id="Is_this_hotel_in_Receivership__c" fieldName="Is_this_hotel_in_Receivership__c"
+                                            onchange="{!c.handleRendering}" variant="label-hidden"/>
+                </lightning:layoutItem>
+                
+                <lightning:layout aura:id="isReceivership"  multipleRows="true">
+                    <lightning:layoutItem size="6" class="slds-m-top_x-small"> 
+                        <label class="slds-form-element__label" for="Receiver_Name__c">
+                        <span class="slds-required">*</span>
+                        Receiver Name
+                        </label>
+                        <lightning:inputField aura:id="Receiver_Name__c" fieldName="Receiver_Name__c" variant="label-hidden"/>
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem size="6" class="slds-m-top_x-small  slds-p-left_x-small"> 
+                    <label class="slds-form-element__label" for="Receivership_Phone__c">
+                        <span class="slds-required">*</span>
+                        Phone
+                        </label>
+                        <lightning:inputField aura:id="Receivership_Phone__c" fieldName="Receivership_Phone__c" variant="label-hidden"/>
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem size="12" class="slds-m-top_x-small"> 
+                        <label class="slds-form-element__label" for="Receivership_Address_Line_1__c">
+                        <span class="slds-required">*</span>
+                        Address Line 1
+                        </label>
+                        <lightning:inputField aura:id="Receivership_Address_Line_1__c" fieldName="Receivership_Address_Line_1__c" variant="label-hidden"/>
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem size="12" class="slds-m-top_x-small"> 
+                        <lightning:inputField aura:id="Receivership_Address_Line_2__c" fieldName="Receivership_Address_Line_2__c"/>
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem size="4" class="slds-m-top_x-small"> 
+                        <label class="slds-form-element__label" for="Receivership_City__c">
+                        <span class="slds-required">*</span>
+                        City
+                        </label>
+                        <lightning:inputField aura:id="Receivership_City__c" fieldName="Receivership_City__c" 
+                                              variant="label-hidden"/>
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem size="4" class="slds-m-top_x-small slds-p-left_x-small"> 
+                        <label class="slds-form-element__label" for="Receivership_State_Province__c">
+                        <span class="slds-required">*</span>
+                        State
+                        </label>
+                        <lightning:inputField aura:id="Receivership_State_Province__c" fieldName="Receivership_State_Province__c" 
+                                              variant="label-hidden"/>
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem size="4" class="slds-m-top_x-small slds-p-left_x-small"> 
+                        <label class="slds-form-element__label" for="Receivership_Zip_Postal_Code__c">
+                        <span class="slds-required">*</span>
+                        Zip/Postal Code
+                        </label>
+                        <lightning:inputField aura:id="Receivership_Zip_Postal_Code__c" fieldName="Receivership_Zip_Postal_Code__c" 
+                                              variant="label-hidden"/>
+                    </lightning:layoutItem>
+                        
+                    <lightning:layoutItem size="4" class="slds-m-top_x-small slds-p-left_x-small slds-hide"> 
+                        <lightning:inputField aura:id="Receivership_Country__c" fieldName="Receivership_Country__c"/>
+                    </lightning:layoutItem>
+                </lightning:layout>
+                
+        	</lightning:layout>
+                <div class="slds-align_absolute-center slds-m-top_large">
+                	<lightning:button aura:id="prevButton" disabled="{!v.step == 1}" variant="brand" label="Previous" onclick="{!c.decrementStep}"/>
+                	<lightning:button variant="brand" label="Next" type="submit"/>
+            	</div>
+                    
+                </lightning:recordEditForm>
+            </form>
+        </lightning:layoutItem>
+        <lightning:layoutItem  padding="around-large" size="4">
+            <c:ApplicationFileDisplay appId="{!v.newApplication.Id}"
+                idToUploadTo ="{!v.idToPrivateFiles.Additional_Document__c.Id}"/>
+        </lightning:layoutItem>
+    </lightning:layout>
+    </div>
+</aura:component>

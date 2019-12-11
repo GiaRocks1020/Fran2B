@@ -1,0 +1,4 @@
+<design:component>
+	<design:attribute name="GridName" label="Grid Name" />
+    <design:attribute name="ParentObjName" label="Parent Object API Name" />
+</design:component>

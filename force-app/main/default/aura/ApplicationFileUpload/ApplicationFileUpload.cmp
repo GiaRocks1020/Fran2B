@@ -1,0 +1,14 @@
+<aura:component>
+	<aura:attribute name ="section" type="String"/>
+	<aura:attribute name ="label" type="String"/>
+	<aura:attribute name ="cssClasses" type="String"/>
+	<aura:attribute name ="parentId" type="String"/>
+
+
+	<lightning:fileUpload label="{!v.label}"
+                    name="fileUploader"
+                    class="{!v.cssClasses}" 
+                    multiple="true" 
+                    recordId="{!v.parentId}" 
+                    onuploadfinished="{!c.handleUploadFinish}" />
+</aura:component>

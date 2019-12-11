@@ -1,0 +1,481 @@
+<aura:component access="global" controller="ApplicationOtherInfoController">
+    <aura:attribute name="newApplication" type="Application__c" default="{'sobjectType' : 'Application__c'}"/>
+
+    <aura:attribute name="applications" type="Application__c[]"/>
+    <aura:attribute name="bank1States" type="Object"/>
+    <aura:attribute name="bank1Countries" type="Object"/>
+    <aura:attribute name="bank2States" type="Object"/>
+    <aura:attribute name="bank2Countries" type="Object"/>
+    <aura:attribute name="insuranceStates" type="Object"/>
+    <aura:attribute name="insuranceCountries" type="Object"/>
+    <aura:attribute name="business1States" type="Object"/>
+    <aura:attribute name="business1Countries" type="Object"/>
+    <aura:attribute name="business2States" type="Object"/>
+    <aura:attribute name="business2Countries" type="Object"/>
+    <aura:attribute name="step" type="Integer"/>
+    <aura:attribute name="showSpinner" type="Boolean" default="true" />
+    <aura:attribute name="idToPrivateFiles" type="Map"/>
+    
+    <aura:attribute name="showBank2" type="Boolean" default="false"/>
+    <aura:attribute name="showBusiness2" type="Boolean" default="false"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <aura:handler event="c:ApplicationFileDeleted" action="{!c.handleFileDeletion}"/>
+    <aura:handler event="c:ApplicationUpload" action="{!c.handleFileUpload}"/>
+ 
+    <div class="slds-card-wrapper">
+    <div class="slds-page-header__detail slds-grid slds-text-heading--medium">
+		<h2><ui:outputText value= "Financial &amp; Insurance Information"/>
+        </h2>
+    </div>
+        <hr class="slds-m-top_small"/>
+        <aura:if isTrue="{!v.showSpinner}">
+            <lightning:spinner />
+        </aura:if>  
+	<lightning:layout class="">
+        <lightning:layoutItem padding="around-large" size="8">
+            <form class="slds-form--stacked">
+                <lightning:recordEditForm aura:id="editForm" recordId="{!v.newApplication.Id}" objectApiName="Application__c" onload="{!c.removeSpinner}" onerror="{!c.onError}">
+				
+                <lightning:messages/>
+                <lightning:inputField fieldName="Section__c" variant="label-hidden" aura:id="section" class="slds-hide"/>
+                <!-- Bank Reference Section -->
+				<div class="slds-page-header slds-text-title_caps slds-p-around_small">Provide a Bank Reference</div>
+				<lightning:layout multipleRows="true" horizontalAlign="spread">
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank1name" label="Name of Bank" value="{!v.newApplication.Name_of_Bank__c}"/>-->
+                    <lightning:inputField fieldName="Name_of_Bank__c" aura:id="bank1name"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank1contact" label="Contact" value="{!v.newApplication.Information_Bank_Contact__c}"/>-->
+                    <lightning:inputField fieldName="Information_Bank_Contact__c" aura:id="bank1contact"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank1address1" label="Street 1" value="{!v.newApplication.Information_Bank_Address_Line_1__c}"/>-->
+                    <lightning:inputField fieldName="Information_Bank_Address_Line_1__c" aura:id="bank1address1"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank1address2" label="Street 2" value="{!v.newApplication.Information_Bank_Address_Line_2__c}"/>-->
+                    <lightning:inputField fieldName="Information_Bank_Address_Line_2__c" aura:id="bank1address2"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank1city" label="City" value="{!v.newApplication.Information_Bank_City__c}"/>-->
+                    <lightning:inputField fieldName="Information_Bank_City__c" aura:id="bank1city"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                <!--<lightning:select label="State" value="{!v.newApplication.Information_Bank_State_Province__c}">
+                		<option value="">- State -</option>
+                	<aura:iteration items="{!v.bank1States}" var="state">
+                        <option value="{!state.value}" label="{!state.label}" selected="{!state.value == v.newApplication.Information_Bank_State_Province__c}"/>
+                	</aura:iteration>
+            	</lightning:select>-->
+                    <lightning:inputField fieldName="Information_Bank_State_Province__c" aura:id="bank1States"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-m-top_x-small">
+                <!--<lightning:select label="Country" value="{!v.newApplication.Information_Bank_Country__c}">
+                		<option value="">- Country -</option>
+                	<aura:iteration items="{!v.bank1Countries}" var="country">
+                        <option value="{!country.value}" label="{!country.label}" selected="{!country.value == v.newApplication.Information_Bank_Country__c}"/>
+                	</aura:iteration>
+            	</lightning:select>-->
+                    <lightning:inputField fieldName="Information_Bank_Country__c" aura:id="bank1Countries"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank1zip" label="Zip" value="{!v.newApplication.Information_Bank_Zip_Postal_Code__c}"/>-->
+                    <lightning:inputField fieldName="Information_Bank_Zip_Postal_Code__c" aura:id="bank1zip"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank1phone" label="Phone" value="{!v.newApplication.Information_Bank_Phone__c}"/>-->
+                    <lightning:inputField fieldName="Information_Bank_Phone__c" aura:id="bank1phone"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank1accountinnameof" label="Account in name of:" value="{!v.newApplication.Information_Bank_Account_In_Name_of__c}"/>-->
+                    <lightning:inputField fieldName="Information_Bank_Account_In_Name_of__c" aura:id="bank1accountinnameof"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank1accountnum" label="Account #" value="{!v.newApplication.Information_Bank_Account__c}"/>-->
+                    <lightning:inputField fieldName="Information_Bank_Account__c" aura:id="bank1accountnum"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <div class="slds-form-element__label">Type of Account:</div>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="checkbox" name="bank1checking" label="Checking" checked="{!v.newApplication.Checking_Account__c}"/>-->
+                    <lightning:inputField fieldName="Checking_Account__c" aura:id="bank1checking"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="checkbox" name="bank1savings" label="Savings" checked="{!v.newApplication.Savings_Account__c}"/>-->
+                    <lightning:inputField fieldName="Savings_Account__c" aura:id="bank1savings"/>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="checkbox" name="bank1loan" label="Loan" checked="{!v.newApplication.Loan_Account__c}"/>-->
+                    <lightning:inputField fieldName="Loan_Account__c" aura:id="bank1loan"/>
+                </lightning:layoutItem>
+                
+                <aura:if isTrue="{!!v.showBank2}">
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <lightning:button variant="brand" name="addBank" label="Add another bank" title="Add Bank" onclick="{! c.addExtraEntries}"/>
+                </lightning:layoutItem>
+                </aura:if>
+                    
+                <!-- Second Bank Info -->
+                <aura:if isTrue="{!v.showBank2}">
+                <lightning:layoutItem size="12">
+					<div class="slds-page-header slds-text-title_caps slds-m-top_x-large slds-p-around_small">Provide a Bank Reference</div>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank2name" label="Name of Bank" value="{!v.newApplication.Name_of_Bank_2__c}"/>-->
+                    <lightning:inputField fieldName="Name_of_Bank_2__c" aura:id="bank2name"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank2contact" label="Contact" value="{!v.newApplication.Information_Bank_2_Contact__c }"/>-->
+                    <lightning:inputField fieldName="Information_Bank_2_Contact__c" aura:id="bank2contact"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank2address1" label="Street 1" value="{!v.newApplication.Information_Bank_2_Address_Line_1__c }"/>-->
+                    <lightning:inputField fieldName="Information_Bank_2_Address_Line_1__c" aura:id="bank2address1"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank2address2" label="Street 2" value="{!v.newApplication.Information_Bank_2_Address_Line_2__c}"/>-->
+                    <lightning:inputField fieldName="Information_Bank_2_Address_Line_2__c" aura:id="bank2address2"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank2city" label="City" value="{!v.newApplication.Information_Bank_2_City__c}"/>-->
+					<lightning:inputField fieldName="Information_Bank_2_City__c" aura:id="bank2city"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                <!--<lightning:select label="State" value="{!v.newApplication.Information_Bank_2_State_Province__c}">
+                		<option value="">- State -</option>
+                	<aura:iteration items="{!v.bank2States}" var="state">
+                        <option value="{!state.value}" label="{!state.label}" selected="{!state.value == v.newApplication.Information_Bank_2_State_Province__c}"/>
+                	</aura:iteration>
+            	</lightning:select>-->
+                    <lightning:inputField fieldName="Information_Bank_2_State_Province__c" aura:id="bank2States"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-m-top_x-small">
+                <!--<lightning:select label="Country" value="{!v.newApplication.Information_Bank_2_Country__c}">
+                		<option value="">- Country -</option>
+                	<aura:iteration items="{!v.bank2Countries}" var="country">
+                        <option value="{!country.value}" label="{!country.label}" selected="{!country.value == v.newApplication.Information_Bank_2_Country__c}"/>
+                	</aura:iteration>
+            	</lightning:select>-->
+                    <lightning:inputField fieldName="Information_Bank_2_Country__c" aura:id="bank2Countries"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank2zip" label="Zip" value="{!v.newApplication.Information_Bank_2_Zip_Postal_Code__c}"/>-->
+                    <lightning:inputField fieldName="Information_Bank_2_Zip_Postal_Code__c" aura:id="bank2zip"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank2phone" label="Phone" value="{!v.newApplication.Information_Bank_2_Phone__c}"/>-->
+                    <lightning:inputField fieldName="Information_Bank_2_Phone__c" aura:id="bank2phone"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank2accountinnameof" label="Account in name of:" value="{!v.newApplication.Information_Bank_2_Account_In_Name_of__c}"/>-->
+                    <lightning:inputField fieldName="Information_Bank_2_Account_In_Name_of__c" aura:id="bank2accountinnameof"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="bank2accountnum" label="Account #" value="{!v.newApplication.Information_Bank_2_Account__c}"/>-->
+                    <lightning:inputField fieldName="Information_Bank_2_Account__c" aura:id="bank2accountnum"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <div class="slds-form-element__label">Type of Account:</div>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="checkbox" name="bank2checking" label="Checking" checked="{!v.newApplication.Checking_Account_2__c}"/>-->
+                    <lightning:inputField fieldName="Checking_Account_2__c" aura:id="bank2checking"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="checkbox" name="bank2savings" label="Savings" checked="{!v.newApplication.Savings_Account_2__c}"/>-->
+                    <lightning:inputField fieldName="Savings_Account_2__c" aura:id="bank2savings"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="checkbox" name="bank2loan" label="Loan" checked="{!v.newApplication.Loan_Account_2__c}"/>-->
+                    <lightning:inputField fieldName="Loan_Account_2__c" aura:id="bank2loan"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <lightning:button variant="destructive" name="removeBank" label="Remove Bank" title="Remove Bank" onclick="{!c.removeExtraEntries}"/>
+                </lightning:layoutItem>
+                </aura:if>
+                
+    			<!-- Business Section -->
+                <lightning:layoutItem size="12">
+    				<div class="slds-page-header slds-text-title_caps slds-m-top_x-large slds-p-around_small">Business References</div>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business1name" label="Company Name" value="{!v.newApplication.Information_Business_Company_Name__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_Company_Name__c" aura:id="business1name"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business1contact" label="Contact" value="{!v.newApplication.Information_Business_Contact__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_Contact__c" aura:id="business1contact"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business1address1" label="Street 1" value="{!v.newApplication.Information_Business_Address_Line_1__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_Address_Line_1__c" aura:id="business1address1"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business1address2" label="Street 2" value="{!v.newApplication.Information_Business_Address_Line_2__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_Address_Line_2__c" aura:id="business1address2"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business1city" label="City" value="{!v.newApplication.Information_Business_City__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_City__c" aura:id="business1city"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                <!--<lightning:select label="State" value="{!v.newApplication.Information_Business_State_Province__c}">
+                		<option value="">- State -</option>
+                	<aura:iteration items="{!v.business1States}" var="state">
+                        <option value="{!state.value}" label="{!state.label}" selected="{!state.value == v.newApplication.Information_Business_State_Province__c}"/>
+                	</aura:iteration>
+            	</lightning:select>-->
+                    <lightning:inputField fieldName="Information_Business_State_Province__c" aura:id="business1States"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-m-top_x-small">
+                <!--<lightning:select label="Country" value="{!v.newApplication.Information_Business_Country__c}">
+                		<option value="">- Country -</option>
+                	<aura:iteration items="{!v.business1Countries}" var="country">
+                        <option value="{!country.value}" label="{!country.label}" selected="{!country.value == v.newApplication.Information_Business_Country__c}"/>
+                	</aura:iteration>
+            	</lightning:select>-->
+                    <lightning:inputField fieldName="Information_Business_Country__c" aura:id="business1Countries"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business1zip" label="Zip" value="{!v.newApplication.Information_Business_Zip_Postal_Code__c }"/>-->
+                    <lightning:inputField fieldName="Information_Business_Zip_Postal_Code__c" aura:id="business1zip"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business1phone" label="Phone" value="{!v.newApplication.Information_Business_Phone__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_Phone__c" aura:id="business1phone"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business1accountinnameof" label="Account in name of:" value="{!v.newApplication.Information_Business_Account_In_Name_of__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_Account_In_Name_of__c" aura:id="business1accountinnameof"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business1accountnum" label="Account #" value="{!v.newApplication.Information_Business_Account__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_Account__c" aura:id="business1accountnum"/>
+                </lightning:layoutItem>
+                <aura:if isTrue="{!!v.showBusiness2}">
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <lightning:button variant="brand" name="addBusiness" label="Add another business reference" title="business reference" onclick="{! c.addExtraEntries}"/>
+                </lightning:layoutItem>
+                </aura:if>
+                    
+                <!-- Business Section 2 -->
+                <aura:if isTrue="{!v.showBusiness2}">
+                <lightning:layoutItem size="12">
+    				<div class="slds-page-header slds-text-title_caps slds-m-top_x-large slds-p-around_small">Business References</div>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business2name" label="Company Name" value="{!v.newApplication.Information_Business_2_Company_Name__c }"/>-->
+                    <lightning:inputField fieldName="Information_Business_2_Company_Name__c" aura:id="business2name"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business2contact" label="Contact" value="{!v.newApplication.Information_Business_2_Contact__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_2_Contact__c" aura:id="business2contact"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business2address1" label="Street 1" value="{!v.newApplication.Information_Business_2_Address_Line_1__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_2_Address_Line_1__c" aura:id="business2address1"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business2address2" label="Street 2" value="{!v.newApplication.Information_Business_2_Address_Line_2__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_2_Address_Line_2__c" aura:id="business2address2"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business2city" label="City" value="{!v.newApplication.Information_Business_2_City__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_2_City__c" aura:id="business2city"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                <!--<lightning:select label="State" value="{!v.newApplication.Information_Business_2_State_Province__c}">
+                		<option value="">- State -</option>
+                	<aura:iteration items="{!v.business2States}" var="state">
+                        <option value="{!state.value}" label="{!state.label}" selected="{!state.value == v.newApplication.Information_Business_2_State_Province__c}"/>
+                	</aura:iteration>
+            	</lightning:select>-->
+                    <lightning:inputField fieldName="Information_Business_2_State_Province__c" aura:id="business2States"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-m-top_x-small">
+                <!--<lightning:select label="Country" value="{!v.newApplication.Information_Business_2_Country__c}">
+                		<option value="">- Country -</option>
+                	<aura:iteration items="{!v.business2Countries}" var="country">
+                        <option value="{!country.value}" label="{!country.label}" selected="{!country.value == v.newApplication.Information_Business_2_Country__c}"/>
+                	</aura:iteration>
+            	</lightning:select>-->
+                    <lightning:inputField fieldName="Information_Business_2_Country__c" aura:id="business2Countries"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business2zip" label="Zip" value="{!v.newApplication.Information_Business_2_Zip_Postal_Code__c }"/>-->
+                    <lightning:inputField fieldName="Information_Business_2_Zip_Postal_Code__c" aura:id="business2zip"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business2phone" label="Phone" value="{!v.newApplication.Information_2_Business_Phone__c}"/>-->
+                    <lightning:inputField fieldName="Information_2_Business_Phone__c" aura:id="business2phone"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business2accountinnameof" label="Account in name of:" value="{!v.newApplication.Information_Business_2_Account_In_Name_of__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_2_Account_In_Name_of__c" aura:id="business2accountinnameof"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="business2accountnum" label="Account #" value="{!v.newApplication.Information_Business_2_Account__c}"/>-->
+                    <lightning:inputField fieldName="Information_Business_2_Account__c" aura:id="business2accountnum"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <lightning:button variant="destructive" name="removeBusiness" label="Remove business reference" title="Remove business reference" onclick="{!c.removeExtraEntries}"/>
+                </lightning:layoutItem>
+                </aura:if>
+                
+                <!-- Insurance Section -->
+                <lightning:layoutItem size="12">
+					<div class="slds-page-header slds-text-title_caps slds-m-top_x-large slds-p-around_small">Insurance Agent</div>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="insurancename" label="Company Name" value="{!v.newApplication.Information_Insurance_Company_Name__c}"/>-->
+                    <lightning:inputField fieldName="Information_Insurance_Company_Name__c" aura:id="insurancename"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="insurancecontact" label="Contact" value="{!v.newApplication.Information_Insurance_Contact__c}"/>-->
+                    <lightning:inputField fieldName="Information_Insurance_Contact__c" aura:id="insurancecontact"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="insuranceaddress1" label="Street 1" value="{!v.newApplication.Information_Insurance_Address_Line_1__c}"/>-->
+                    <lightning:inputField fieldName="Information_Insurance_Address_Line_1__c" aura:id="insuranceaddress1"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="insuranceaddress2" label="Street 2" value="{!v.newApplication.Information_Insurance_Address_Line_2__c}"/>-->
+                    <lightning:inputField fieldName="Information_Insurance_Address_Line_2__c" aura:id="insuranceaddress2"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="insurancecity" label="City" value="{!v.newApplication.Information_Insurance_City__c}"/>-->
+                    <lightning:inputField fieldName="Information_Insurance_City__c" aura:id="insurancecity"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                <!--<lightning:select label="State" value="{!v.newApplication.Information_Insurance_State_Province__c}">
+                		<option value="">- State -</option>
+                	<aura:iteration items="{!v.insuranceStates}" var="state">
+                        <option value="{!state.value}" label="{!state.label}" selected="{!state.value == v.newApplication.Information_Insurance_State_Province__c}"/>
+                	</aura:iteration>
+            	</lightning:select>-->
+                    <lightning:inputField fieldName="Information_Insurance_State_Province__c" aura:id="insuranceStates"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-m-top_x-small">
+                <!--<lightning:select label="Country" value="{!v.newApplication.Information_Insurance_Country__c}">
+                		<option value="">- Country -</option>
+                	<aura:iteration items="{!v.insuranceCountries}" var="country">
+                        <option value="{!country.value}" label="{!country.label}" selected="{!country.value == v.newApplication.Information_Insurance_Country__c}"/>
+                	</aura:iteration>
+            	</lightning:select>-->
+                    <lightning:inputField fieldName="Information_Insurance_Country__c" aura:id="insuranceCountries"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-p-left_x-small slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="insurancezip" label="Zip" value="{!v.newApplication.Information_Insurance_Zip_Postal_Code__c}"/>-->
+                    <lightning:inputField fieldName="Information_Insurance_Zip_Postal_Code__c" aura:id="insurancezip"/>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <!--<lightning:input type="text" name="insurancephone" label="Phone" value="{!v.newApplication.Information_Insurance_Phone__c}"/>-->
+                    <lightning:inputField fieldName="Information_Insurance_Phone__c" aura:id="insurancephone"/>
+                </lightning:layoutItem>
+                    
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <c:ApplicationFileUpload parentId="{!v.idToPrivateFiles.Insurance_Certificate__c.Id}" section="Insurance_Certificate__c" label="Insurance Certificate"/>
+                </lightning:layoutItem>
+
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-m-top_x-small noHover">
+                    <label class="slds-form-element__label" for="Insurance_Certificate__c">Insurance Certificate Uploaded?</label>
+                    <lightning:inputField  class="noCLick" fieldName="Insurance_Certificate__c" aura:id="Insurance_Certificate__c" variant="label-hidden" />
+                </lightning:layoutItem> 
+
+
+                <lightning:layoutItem size="12">
+                    <div class="slds-page-header slds-text-title_caps slds-m-top_x-large slds-p-around_small">ADA Certificate</div>
+                </lightning:layoutItem>     
+
+                <lightning:layoutItem size="12" class="slds-m-top_x-small">
+                    <c:ApplicationFileUpload parentId="{!v.idToPrivateFiles.ADA_Certificate__c.Id}" section="ADA_Certificate__c" label="ADA Certificate"/>
+                </lightning:layoutItem>     
+
+                <lightning:layoutItem size="6" flexibility="grow" class="slds-m-top_x-small noHover">
+                    <label class="slds-form-element__label" for="ADA_Certificate__c">ADA Certificate Uploaded?</label>
+                    <lightning:inputField  class="noCLick" fieldName="ADA_Certificate__c" aura:id="ADA_Certificate__c" variant="label-hidden" />
+                </lightning:layoutItem>            
+                
+
+                </lightning:layout>                
+                
+                
+                    
+                <div class="slds-align_absolute-center slds-m-top_large">
+                    <lightning:overlayLibrary aura:id="overlayLib"/>
+                    <lightning:button aura:id="prevButton" disabled="{!v.step == 1}" variant="brand" label="Previous" onclick="{!c.decrementStep}"/>
+                    <lightning:button variant="brand" label="Next" onclick="{!c.onSubmit}"/>        
+        		</div>
+                </lightning:recordEditForm>
+            </form>
+        </lightning:layoutItem>
+        <lightning:layoutItem  padding="around-large" size="4">
+            <c:ApplicationFileDisplay appId="{!v.newApplication.Id}"
+                idToUploadTo ="{!v.idToPrivateFiles.Additional_Document__c.Id}"/>
+        </lightning:layoutItem>
+    </lightning:layout>
+    </div>	
+</aura:component>

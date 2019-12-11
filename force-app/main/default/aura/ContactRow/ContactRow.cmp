@@ -1,0 +1,48 @@
+<aura:component >
+    <aura:attribute name="contact" Type="Contact"/>
+    <aura:attribute name="selectedId" type="String" />
+    <aura:attribute name="apiNames" Type="List" />
+    <aura:attribute name="displayData" Type="List"/>
+    <aura:attribute name="isSelected" Type="Boolean" default="false" />
+    <aura:attribute name="selectedContact" type="Object" />
+    <aura:attribute name="lead" type="Object" />
+    <aura:attribute name="percent" type="Integer"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:handler name="change" value="{!v.selectedId}" action="{!c.checkSelection}"/>
+    
+     <div role="dialog" tabindex="-1" aria-labelledby="modal-header-01" aura:id="Modalbox" class="slds-modal">
+        <div class="slds-modal__container modal-formatted" id="standardSearchContainer">
+            <div class="slds-modal__content slds-p-around--medium">
+                <c:LeadConvertContactRelatedAccounts contact="{!v.contact}" showRadio="false"/>
+                <lightning:layoutItem padding="around-small" size="10" class="slds-align_absolute-center">
+                	<lightning:button name="modal" label="Close" onclick="{!c.closeModal}"/>
+                </lightning:layoutItem>
+            </div>
+        </div>
+    </div>
+    <div class="slds-backdrop " aura:id="Modalbackdrop"></div>
+    <tr>
+        <th class="radio-s-width">
+	 		<label class="slds-radio">   
+                <ui:inputRadio aura:id="{!v.contact.Id}" change="{!c.isClicked}" value="{!v.isSelected}"/>
+                <span class="slds-radio--faux"></span>
+                <span class="slds-assistive-text">Select Row</span>
+   			</label>
+
+        </th>
+        <aura:iteration items="{!v.displayData}" var="dd">
+            <th>
+                {!dd}
+            </th>
+        </aura:iteration>
+        <th>
+            {!v.percent}%
+        </th>
+        <th>
+            <lightning:layoutItem size="10" class="slds-align_absolute-center">
+            <lightning:button name="modal" label="View Accounts" onclick="{!c.handleShowModal}"/>
+            </lightning:layoutItem>
+        </th>                    
+	</tr>
+</aura:component>
